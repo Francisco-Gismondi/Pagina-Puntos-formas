@@ -1,0 +1,63 @@
+.podio-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 15px;
+  min-height: 220px;
+  margin-top: 20px;
+}
+
+.puesto {
+  min-width: 130px;
+  max-width: 250px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 15px 5px 5px 5px;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  word-wrap: break-word;
+  height: auto;
+  min-height: 120px;
+}
+
+.puesto span {
+  font-size: 0.85em;
+  font-weight: normal;
+  margin-top: 5px;
+}
+
+.oro {
+  background-color: #ffd700;
+  min-height: 170px;
+  z-index: 3;
+  color: #856404;
+}
+
+.plata {
+  background-color: #e3e4e5;
+  min-height: 130px;
+  z-index: 2;
+  color: #383d41;
+}
+
+.bronce {
+  background-color: #cd7f32;
+  min-height: 95px;
+  z-index: 1;
+  color: #fff;
+}
+
+.alerta-empate {
+  font-size: 0.75em;
+  color: #dc3545;
+  background: white;
+  padding: 3px 6px;
+  border-radius: 4px;
+  margin-top: 8px;
+  line-height: 1.2;
+  font-weight: bold;
+  border: 1px solid #dc3545;
+  text-transform: uppercase;
+}

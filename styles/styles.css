@@ -1,0 +1,422 @@
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: #f4f6f9;
+  margin: 0;
+  padding: 20px;
+  color: #333;
+}
+
+.contenedor {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.controles-superiores {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #ffffff;
+  /* La magia para que quede siempre visible (Sticky) */
+  position: sticky;
+  top: 0;
+  z-index: 100; /* Asegura que flote por encima de la tabla */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08); /* Sombra sutil para despegarlo del fondo */
+  border: 1px solid #dee2e6;
+}
+
+.grupo-botones {
+  display: flex;
+  gap: 10px;
+}
+
+.encabezado-torneo {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+}
+
+.encabezado-torneo .campo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.encabezado-torneo label {
+  font-weight: bold;
+  color: #495057;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+th,
+td {
+  border: 1px solid #dee2e6;
+  padding: 12px 8px;
+  text-align: center;
+}
+th {
+  background-color: #1a2c42;
+  color: white;
+  font-size: 0.9em;
+  text-transform: uppercase;
+}
+.fila-oscura {
+  background-color: #f8f9fa;
+}
+
+input[type="number"],
+input[type="text"],
+select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+}
+input[type="text"] {
+  text-align: left;
+}
+
+.btn-eliminar {
+  background-color: transparent;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+  padding: 4px 8px;
+  margin-top: 8px;
+  font-size: 0.85em;
+  width: 100%;
+}
+.btn-eliminar:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.juez-descartado {
+  text-decoration: line-through;
+  color: #dc3545;
+  background-color: #f8d7da;
+  opacity: 0.8;
+}
+
+.controles {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  justify-content: center;
+}
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn-agregar {
+  background-color: #28a745;
+  color: white;
+}
+.btn-agregar:hover {
+  background-color: #218838;
+}
+.btn-podio {
+  background-color: #ffc107;
+  color: #212529;
+}
+.btn-podio:hover {
+  background-color: #e0a800;
+}
+.btn-pdf {
+  background-color: #6f42c1;
+  color: white;
+}
+.btn-pdf:hover {
+  background-color: #59339d;
+}
+.btn-reiniciar {
+  background-color: #dc3545;
+  color: white;
+}
+.btn-reiniciar:hover {
+  background-color: #c82333;
+}
+
+/* --- Estructura Mejorada del Podio --- */
+.seccion-podio {
+  text-align: center;
+  border-top: 2px dashed #ccc;
+  padding-top: 20px;
+}
+
+.podio-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* Alinea los escalones hacia abajo */
+  gap: 15px;
+  min-height: 220px; /* Más espacio vertical para que no se desborde */
+  margin-top: 20px;
+}
+
+.puesto {
+  min-width: 130px; /* Evita que los nombres se aplasten horizontalmente */
+  max-width: 250px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 15px 10px 10px 10px; /* Mejora el margen interno */
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  word-wrap: break-word; /* Si un nombre es larguísimo, lo corta en dos líneas */
+}
+
+.puesto span {
+  font-size: 0.85em;
+  font-weight: normal;
+  margin-top: 5px;
+}
+
+/* Usamos min-height para asegurar la escalera, pero permitiendo que crezcan si hay empate */
+.oro {
+  background-color: #ffd700;
+  min-height: 170px;
+  z-index: 3;
+  color: #856404;
+}
+.plata {
+  background-color: #e3e4e5;
+  min-height: 130px;
+  z-index: 2;
+  color: #383d41;
+}
+.bronce {
+  background-color: #cd7f32;
+  min-height: 95px;
+  z-index: 1;
+  color: #fff;
+}
+
+/* Ajustes visuales para el cartel de empate */
+.alerta-empate {
+  font-size: 0.75em;
+  color: #dc3545;
+  background: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-top: 10px;
+  line-height: 1.2;
+  font-weight: bold;
+  border: 1px solid #dc3545;
+  text-transform: uppercase;
+}
+
+.nombres-podio {
+  font-size: 0.9em;
+  font-weight: normal;
+  margin: 5px 0;
+  display: block;
+  line-height: 1.3;
+}
+
+/* Sumar a la sección de botones en tu CSS */
+.btn-excel {
+  background-color: #1d6f42;
+  color: white;
+}
+.btn-excel:hover {
+  background-color: #155724;
+}
+
+/* Estilos para reflejar los empates en el podio */
+.alerta-empate {
+  font-size: 0.75em;
+  color: #dc3545;
+  background: white;
+  padding: 3px 6px;
+  border-radius: 4px;
+  margin-top: 8px;
+  line-height: 1.2;
+  font-weight: bold;
+  border: 1px solid #dc3545;
+  text-transform: uppercase;
+}
+
+.nombres-podio {
+  font-size: 0.9em;
+  font-weight: normal;
+  margin: 5px 0;
+  display: block;
+  line-height: 1.3;
+}
+
+.puesto {
+  /* Ajustamos el padding para que entren varios nombres si es necesario */
+  padding: 15px 5px 5px 5px;
+  height: auto; /* Permite que el bloque crezca si hay 3 empatados */
+  min-height: 120px;
+}
+/* Botón y fila de Desempate */
+.btn-desempate {
+  background-color: transparent;
+  color: #fd7e14;
+  border: 1px solid #fd7e14;
+  padding: 4px 8px;
+  margin-top: 8px;
+  font-size: 0.85em;
+  width: 100%;
+}
+.btn-desempate:hover {
+  background-color: #fd7e14;
+  color: white;
+}
+
+.fila-desempate {
+  background-color: #fff3cd; /* Un tono amarillo/naranja suave para destacarla */
+}
+
+/* Espaciado para los íconos de Font Awesome */
+button i.fas {
+  margin-right: 6px;
+}
+
+/* =========================================
+   ESTILOS NATIVOS PARA IMPRESIÓN Y PDF
+   ========================================= */
+@media print {
+  /* Forzamos el tamaño de hoja A4 en horizontal y los márgenes */
+  @page {
+    size: A4 landscape;
+    margin: 10mm;
+  }
+
+  /* Limpiamos fondos y sombras del contenedor general */
+  body {
+    background-color: white !important;
+    margin: 0;
+    padding: 0;
+  }
+
+  .contenedor {
+    box-shadow: none !important;
+    border: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Ocultamos los botones y elementos de interfaz */
+  .ocultar-en-pdf,
+  .controles-superiores,
+  .btn-eliminar,
+  .btn-desempate {
+    display: none !important;
+  }
+
+  /* Ajustamos la tabla para que no se desborde */
+  table {
+    table-layout: fixed;
+    width: 100%;
+    font-size: 10pt; /* Tamaño ideal para lectura en papel */
+  }
+
+  th,
+  td {
+    padding: 4px;
+    word-wrap: break-word;
+  }
+
+  /* Magia para los inputs: los hacemos parecer texto normal (sin bordes) */
+  input[type="text"],
+  input[type="number"],
+  select {
+    border: none !important;
+    background: transparent !important;
+    font-size: 11pt !important;
+    color: black !important;
+    appearance: none !important; /* Quita la flechita del select */
+    -webkit-appearance: none !important;
+    padding: 0 !important;
+  }
+
+  /* Quitamos las flechitas de subir/bajar números en los inputs numéricos */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Evita que un competidor quede cortado a la mitad entre dos páginas */
+  tr,
+  tbody {
+    page-break-inside: avoid !important;
+  }
+
+  /* Obliga al navegador a imprimir los colores de fondo (encabezados oscuros, colores del podio) */
+  th,
+  .oro,
+  .plata,
+  .bronce,
+  .fila-oscura,
+  .fila-desempate,
+  .alerta-empate {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+  /* =========================================
+       DISTRIBUCIÓN DE COLUMNAS EN EL PDF
+       ========================================= */
+  /* 1. Competidor: Le damos el 24% del ancho de la hoja */
+  th:nth-child(1) {
+    width: 24%;
+  }
+
+  /* 3. Forma: Nombres de los tules (14%) */
+  th:nth-child(3) {
+    width: 14%;
+  }
+
+  /* 2. Ronda y 4. Tiempo: Columnas chicas (8% cada una) */
+  th:nth-child(2),
+  th:nth-child(4) {
+    width: 8%;
+  }
+
+  /* 5 al 9. Jueces: Solo llevan números, las hacemos muy angostas (5% cada una) */
+  th:nth-child(5),
+  th:nth-child(6),
+  th:nth-child(7),
+  th:nth-child(8),
+  th:nth-child(9) {
+    width: 5%;
+  }
+
+  /* 10 y 11. SubTotal y Total (10% y 11%) */
+  th:nth-child(10) {
+    width: 10%;
+  }
+  th:nth-child(11) {
+    width: 11%;
+  }
+
+  /* Forzamos que el input del nombre muestre todo su contenido usando una letra un poquito más compacta si es necesario */
+  input[type="text"] {
+    width: 100% !important;
+    text-overflow: visible !important;
+    font-size: 10.5pt !important;
+  }
+}

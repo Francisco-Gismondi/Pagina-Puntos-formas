@@ -1,0 +1,106 @@
+.btn-eliminar {
+  background-color: transparent;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+  padding: 4px 8px;
+  margin-top: 8px;
+  font-size: 0.85em;
+  width: 100%;
+}
+
+.btn-eliminar:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.juez-descartado {
+  text-decoration: line-through;
+  color: #dc3545;
+  background-color: #f8d7da;
+  opacity: 0.8;
+}
+
+.btn-agregar {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-agregar:hover {
+  background-color: #218838;
+}
+
+.btn-podio {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.btn-podio:hover {
+  background-color: #e0a800;
+}
+
+.btn-pdf {
+  background-color: #6f42c1;
+  color: white;
+}
+
+.btn-pdf:hover {
+  background-color: #59339d;
+}
+
+.btn-reiniciar {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-reiniciar:hover {
+  background-color: #c82333;
+}
+
+.btn-excel {
+  background-color: #1d6f42;
+  color: white;
+}
+
+.btn-excel:hover {
+  background-color: #155724;
+}
+
+.btn-desempate {
+  background-color: transparent;
+  color: #fd7e14;
+  border: 1px solid #fd7e14;
+  padding: 4px 8px;
+  margin-top: 8px;
+  font-size: 0.85em;
+  width: 100%;
+}
+
+.btn-desempate:hover {
+  background-color: #fd7e14;
+  color: white;
+}
+
+.fila-desempate {
+  background-color: #fff3cd;
+}
+
+.alerta-empate {
+  font-size: 0.75em;
+  color: #dc3545;
+  background: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-top: 10px;
+  line-height: 1.2;
+  font-weight: bold;
+  border: 1px solid #dc3545;
+  text-transform: uppercase;
+}
+
+.nombres-podio {
+  font-size: 0.9em;
+  font-weight: normal;
+  margin: 5px 0;
+  display: block;
+  line-height: 1.3;
+}

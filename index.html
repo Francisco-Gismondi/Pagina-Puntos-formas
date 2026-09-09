@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="./images/icon.png" />
+    <title>Torneo Taekwondo - Formas</title>
+    <link rel="stylesheet" href="./styles/base.css" />
+    <link rel="stylesheet" href="./styles/layout.css" />
+    <link rel="stylesheet" href="./styles/components.css" />
+    <link rel="stylesheet" href="./styles/podio.css" />
+    <link rel="stylesheet" href="./styles/print.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="encabezado-principal">
+        <h1 class="titulo-pagina">Planilla de Puntuación - Formas</h1>
+      </header>
+
+      <main class="contenido-principal">
+        <section class="contenedor" aria-label="Planilla de toreno">
+          <div class="controles-superiores ocultar-en-pdf">
+            <div class="grupo-botones">
+              <button
+                class="btn-agregar"
+                onclick="appTorneo.agregarCompetidor()"
+              >
+                <i class="fas fa-user-plus"></i> Agregar Competidor
+              </button>
+              <button class="btn-podio" onclick="appTorneo.calcularPodio()">
+                <i class="fas fa-trophy"></i> Calcular Podio
+              </button>
+            </div>
+
+            <div class="grupo-botones">
+              <button class="btn-excel" onclick="appTorneo.exportarExcel()">
+                <i class="fas fa-file-excel"></i> Exportar a Excel
+              </button>
+              <button class="btn-pdf" onclick="appTorneo.exportarPDF()">
+                <i class="fas fa-file-pdf"></i> Exportar a PDF
+              </button>
+              <button
+                class="btn-reiniciar"
+                onclick="appTorneo.reiniciarPlanilla()"
+              >
+                <i class="fas fa-sync-alt"></i> Reiniciar Plantilla
+              </button>
+            </div>
+          </div>
+
+          <section
+            id="zona-impresion"
+            aria-label="Zona de impresión de la planilla"
+          >
+            <h2>Planilla de Puntuación - Formas</h2>
+
+            <div class="encabezado-torneo">
+              <div class="campo">
+                <label for="inputCategoria">Categoría / Cinturón:</label>
+                <select
+                  id="inputCategoria"
+                  onchange="appTorneo.verificarBotonSorteo()"
+                >
+                  <option value="">Seleccione la categoría...</option>
+                  <option value="10-9 Gup">10-9 Gup</option>
+                  <option value="8-7 Gup">8-7 Gup</option>
+                  <option value="6-5 Gup">6-5 Gup</option>
+                  <option value="4-3 Gup">4-3 Gup</option>
+                  <option value="2-1 Gup">2-1 Gup</option>
+                  <option value="1er Dan">1er Dan</option>
+                  <option value="2do Dan">2do Dan</option>
+                  <option value="3er Dan">3er Dan</option>
+                  <option value="4to Dan">4to Dan</option>
+                  <option value="5to Dan">5to Dan</option>
+                </select>
+              </div>
+
+              <div class="campo">
+                <label for="inputEdad">Edades:</label>
+                <input
+                  type="text"
+                  id="inputEdad"
+                  placeholder="Ej: 18 a 35 años..."
+                />
+              </div>
+
+              <div
+                class="campo"
+                id="contenedor_sorteo"
+                style="justify-content: flex-end; display: none"
+              >
+                <button
+                  class="btn-agregar"
+                  style="background-color: #17a2b8"
+                  onclick="appTorneo.sortearYAsignar()"
+                >
+                  <i class="fas fa-dice"></i> Sortear Formas
+                </button>
+              </div>
+            </div>
+
+            <table id="tablaCompetidores">
+              <thead>
+                <tr>
+                  <th>Competidor</th>
+                  <th>Ronda</th>
+                  <th>Forma</th>
+                  <th>Tiempo</th>
+                  <th>Juez 1</th>
+                  <th>Juez 2</th>
+                  <th>Juez 3</th>
+                  <th>Juez 4</th>
+                  <th>Juez 5</th>
+                  <th>SubTotal</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="listaPuntajes"></tbody>
+            </table>
+
+            <section
+              class="seccion-podio"
+              id="seccionPodio"
+              style="display: none"
+              aria-label="Podio del torneo"
+            >
+              <h3>Podio Actual</h3>
+              <div
+                class="podio-acciones"
+                id="accionesPodio"
+                style="display: none; margin-bottom: 1rem"
+              >
+                <button
+                  class="btn-agregar"
+                  onclick="appTorneo.sortearFormaEmpate()"
+                  style="background-color: #17a2b8"
+                >
+                  <i class="fas fa-dice"></i> Sortear Forma de Empate
+                </button>
+              </div>
+              <div class="podio-container" id="podioContainer"></div>
+            </section>
+          </section>
+        </section>
+      </main>
+
+      <footer class="firma-creador ocultar-en-pdf">
+        <p>Desarrollado por <strong>FranGis</strong></p>
+      </footer>
+    </div>
+
+    <script src="./scripts/tules.js"></script>
+    <script src="./scripts/storage.js"></script>
+    <script src="./scripts/podio.js"></script>
+    <script src="./scripts/app.js"></script>
+  </body>
+</html>
