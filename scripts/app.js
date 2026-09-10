@@ -310,19 +310,25 @@
     function verificarBotonSorteo() {
       const select = document.getElementById("inputCategoria");
       const contenedorSorteo = document.getElementById("contenedor_sorteo");
-      const categoriaActual = getCategoriaActual();
 
       actualizarEstadoCategoriaPersonalizada();
 
       if (select && contenedorSorteo) {
-        contenedorSorteo.style.display =
-          select.value === "Personalizada"
-            ? categoriaActual
-              ? "flex"
-              : "none"
-            : select.value.includes("Dan") || categoriaActual
-              ? "flex"
-              : "none";
+        const categoriaSeleccionada = select.value;
+        const categoriaConSorteo = [
+          "1 Gup",
+          "1er Dan",
+          "2do Dan",
+          "3er Dan",
+          "4to Dan",
+          "5to Dan",
+        ];
+
+        contenedorSorteo.style.display = categoriaConSorteo.includes(
+          categoriaSeleccionada,
+        )
+          ? "flex"
+          : "none";
       }
       guardarCaché(contadorCompetidores);
     }
@@ -337,8 +343,13 @@
 
       const categoriaSeleccionada = getCategoriaActual();
 
+      if (categoriaElement.value === "Personalizada") {
+        alert("La categoría personalizada no tiene sorteo automático.");
+        return;
+      }
+
       if (!categoriaSeleccionada) {
-        alert("Debes ingresar un nombre para la categoría personalizada.");
+        alert("Debes seleccionar una categoría válida.");
         return;
       }
 
