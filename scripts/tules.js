@@ -1,7 +1,5 @@
 (function () {
   const TULES = {
-    "SAJU-JIRUGI": "",
-    "SAJU-MAKGI": "",
     "CHON-JI": "30 seg",
     "DAN-GUN": "34 seg",
     "DO-SAN": "41 seg",
@@ -47,6 +45,13 @@
     let rango2 = [];
 
     switch (categoria) {
+      case "1 Gup":
+        rango1 = ["HWA-RANG", "CHOONG-MOO"];
+        rango2 = ordenTules.slice(
+          ordenTules.indexOf("CHON-JI"),
+          ordenTules.indexOf("CHOONG-MOO") + 1,
+        );
+        break;
       case "1er Dan":
         rango1 = ["KWANG-GAE", "PO-EUN", "GE-BAEK"];
         rango2 = ordenTules.slice(

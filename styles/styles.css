@@ -21,12 +21,11 @@ body {
   margin-bottom: 20px;
   padding: 15px;
   background-color: #ffffff;
-  /* La magia para que quede siempre visible (Sticky) */
   position: sticky;
   top: 0;
-  z-index: 100; /* Asegura que flote por encima de la tabla */
+  z-index: 100;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08); /* Sombra sutil para despegarlo del fondo */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
   border: 1px solid #dee2e6;
 }
 
@@ -155,7 +154,6 @@ button {
   background-color: #c82333;
 }
 
-/* --- Estructura Mejorada del Podio --- */
 .seccion-podio {
   text-align: center;
   border-top: 2px dashed #ccc;
@@ -165,23 +163,23 @@ button {
 .podio-container {
   display: flex;
   justify-content: center;
-  align-items: flex-end; /* Alinea los escalones hacia abajo */
+  align-items: flex-end;
   gap: 15px;
-  min-height: 220px; /* Más espacio vertical para que no se desborde */
+  min-height: 220px;
   margin-top: 20px;
 }
 
 .puesto {
-  min-width: 130px; /* Evita que los nombres se aplasten horizontalmente */
+  min-width: 130px;
   max-width: 250px;
   border-radius: 8px 8px 0 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 15px 10px 10px 10px; /* Mejora el margen interno */
+  padding: 15px 10px 10px 10px;
   font-weight: bold;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-  word-wrap: break-word; /* Si un nombre es larguísimo, lo corta en dos líneas */
+  word-wrap: break-word;
 }
 
 .puesto span {
@@ -190,7 +188,6 @@ button {
   margin-top: 5px;
 }
 
-/* Usamos min-height para asegurar la escalera, pero permitiendo que crezcan si hay empate */
 .oro {
   background-color: #ffd700;
   min-height: 170px;
@@ -210,7 +207,6 @@ button {
   color: #fff;
 }
 
-/* Ajustes visuales para el cartel de empate */
 .alerta-empate {
   font-size: 0.75em;
   color: #dc3545;
@@ -232,7 +228,6 @@ button {
   line-height: 1.3;
 }
 
-/* Sumar a la sección de botones en tu CSS */
 .btn-excel {
   background-color: #1d6f42;
   color: white;
@@ -241,7 +236,6 @@ button {
   background-color: #155724;
 }
 
-/* Estilos para reflejar los empates en el podio */
 .alerta-empate {
   font-size: 0.75em;
   color: #dc3545;
@@ -264,12 +258,11 @@ button {
 }
 
 .puesto {
-  /* Ajustamos el padding para que entren varios nombres si es necesario */
   padding: 15px 5px 5px 5px;
-  height: auto; /* Permite que el bloque crezca si hay 3 empatados */
+  height: auto;
   min-height: 120px;
 }
-/* Botón y fila de Desempate */
+
 .btn-desempate {
   background-color: transparent;
   color: #fd7e14;
@@ -285,25 +278,19 @@ button {
 }
 
 .fila-desempate {
-  background-color: #fff3cd; /* Un tono amarillo/naranja suave para destacarla */
+  background-color: #fff3cd;
 }
 
-/* Espaciado para los íconos de Font Awesome */
 button i.fas {
   margin-right: 6px;
 }
 
-/* =========================================
-   ESTILOS NATIVOS PARA IMPRESIÓN Y PDF
-   ========================================= */
 @media print {
-  /* Forzamos el tamaño de hoja A4 en horizontal y los márgenes */
   @page {
     size: A4 landscape;
     margin: 10mm;
   }
 
-  /* Limpiamos fondos y sombras del contenedor general */
   body {
     background-color: white !important;
     margin: 0;
@@ -319,7 +306,6 @@ button i.fas {
     padding: 0 !important;
   }
 
-  /* Ocultamos los botones y elementos de interfaz */
   .ocultar-en-pdf,
   .controles-superiores,
   .btn-eliminar,
@@ -327,11 +313,10 @@ button i.fas {
     display: none !important;
   }
 
-  /* Ajustamos la tabla para que no se desborde */
   table {
     table-layout: fixed;
     width: 100%;
-    font-size: 10pt; /* Tamaño ideal para lectura en papel */
+    font-size: 10pt;
   }
 
   th,
@@ -340,7 +325,6 @@ button i.fas {
     word-wrap: break-word;
   }
 
-  /* Magia para los inputs: los hacemos parecer texto normal (sin bordes) */
   input[type="text"],
   input[type="number"],
   select {
@@ -348,25 +332,22 @@ button i.fas {
     background: transparent !important;
     font-size: 11pt !important;
     color: black !important;
-    appearance: none !important; /* Quita la flechita del select */
+    appearance: none !important;
     -webkit-appearance: none !important;
     padding: 0 !important;
   }
 
-  /* Quitamos las flechitas de subir/bajar números en los inputs numéricos */
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
 
-  /* Evita que un competidor quede cortado a la mitad entre dos páginas */
   tr,
   tbody {
     page-break-inside: avoid !important;
   }
 
-  /* Obliga al navegador a imprimir los colores de fondo (encabezados oscuros, colores del podio) */
   th,
   .oro,
   .plata,
@@ -377,26 +358,20 @@ button i.fas {
     print-color-adjust: exact !important;
     -webkit-print-color-adjust: exact !important;
   }
-  /* =========================================
-       DISTRIBUCIÓN DE COLUMNAS EN EL PDF
-       ========================================= */
-  /* 1. Competidor: Le damos el 24% del ancho de la hoja */
+
   th:nth-child(1) {
     width: 24%;
   }
 
-  /* 3. Forma: Nombres de los tules (14%) */
   th:nth-child(3) {
     width: 14%;
   }
 
-  /* 2. Ronda y 4. Tiempo: Columnas chicas (8% cada una) */
   th:nth-child(2),
   th:nth-child(4) {
     width: 8%;
   }
 
-  /* 5 al 9. Jueces: Solo llevan números, las hacemos muy angostas (5% cada una) */
   th:nth-child(5),
   th:nth-child(6),
   th:nth-child(7),
@@ -405,7 +380,6 @@ button i.fas {
     width: 5%;
   }
 
-  /* 10 y 11. SubTotal y Total (10% y 11%) */
   th:nth-child(10) {
     width: 10%;
   }
@@ -413,7 +387,6 @@ button i.fas {
     width: 11%;
   }
 
-  /* Forzamos que el input del nombre muestre todo su contenido usando una letra un poquito más compacta si es necesario */
   input[type="text"] {
     width: 100% !important;
     text-overflow: visible !important;

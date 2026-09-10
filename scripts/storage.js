@@ -1,9 +1,15 @@
 (function () {
   const STORAGE_KEY = "torneoTaekwondoCaché";
 
-  function serializarEstado({ categoria, edad, contadorCompetidores }) {
+  function serializarEstado({
+    categoria,
+    categoriaCustom,
+    edad,
+    contadorCompetidores,
+  }) {
     const estado = {
       categoria: categoria || "",
+      categoriaCustom: categoriaCustom || "",
       edad: edad || "",
       competidores: [],
     };
@@ -53,6 +59,9 @@
     const estado = serializarEstado({
       categoria: document.getElementById("inputCategoria")
         ? document.getElementById("inputCategoria").value
+        : "",
+      categoriaCustom: document.getElementById("inputCategoriaPersonalizada")
+        ? document.getElementById("inputCategoriaPersonalizada").value
         : "",
       edad: document.getElementById("inputEdad")
         ? document.getElementById("inputEdad").value

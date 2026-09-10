@@ -2,14 +2,31 @@
   background-color: transparent;
   color: #dc3545;
   border: 1px solid #dc3545;
-  padding: 4px 8px;
+  min-height: 36px;
+  padding: 7px 12px;
   margin-top: 8px;
-  font-size: 0.85em;
+  font-size: 0.82em;
   width: 100%;
+  border-radius: 999px;
 }
 
 .btn-eliminar:hover {
   background-color: #dc3545;
+  color: white;
+}
+
+#tablaCompetidores td button.btn-eliminar,
+#tablaCompetidores td button.btn-eliminar:hover,
+#tablaCompetidores td button.btn-eliminar:focus {
+  background-color: transparent;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+#tablaCompetidores td button.btn-eliminar:hover,
+#tablaCompetidores td button.btn-eliminar:focus {
+  background-color: #dc3545;
+  border-color: #dc3545;
   color: white;
 }
 
@@ -23,6 +40,7 @@
 .btn-agregar {
   background-color: #28a745;
   color: white;
+  border-radius: 999px;
 }
 
 .btn-agregar:hover {
@@ -32,6 +50,7 @@
 .btn-podio {
   background-color: #ffc107;
   color: #212529;
+  border-radius: 999px;
 }
 
 .btn-podio:hover {
@@ -41,6 +60,7 @@
 .btn-pdf {
   background-color: #6f42c1;
   color: white;
+  border-radius: 999px;
 }
 
 .btn-pdf:hover {
@@ -50,6 +70,7 @@
 .btn-reiniciar {
   background-color: #dc3545;
   color: white;
+  border-radius: 999px;
 }
 
 .btn-reiniciar:hover {
@@ -59,6 +80,7 @@
 .btn-excel {
   background-color: #1d6f42;
   color: white;
+  border-radius: 999px;
 }
 
 .btn-excel:hover {
@@ -69,14 +91,31 @@
   background-color: transparent;
   color: #fd7e14;
   border: 1px solid #fd7e14;
-  padding: 4px 8px;
+  min-height: 36px;
+  padding: 7px 12px;
   margin-top: 8px;
-  font-size: 0.85em;
+  font-size: 0.82em;
   width: 100%;
+  border-radius: 999px;
 }
 
 .btn-desempate:hover {
   background-color: #fd7e14;
+  color: white;
+}
+
+#tablaCompetidores td button.btn-desempate,
+#tablaCompetidores td button.btn-desempate:hover,
+#tablaCompetidores td button.btn-desempate:focus {
+  background-color: transparent;
+  color: #fd7e14;
+  border: 1px solid #fd7e14;
+}
+
+#tablaCompetidores td button.btn-desempate:hover,
+#tablaCompetidores td button.btn-desempate:focus {
+  background-color: #fd7e14;
+  border-color: #fd7e14;
   color: white;
 }
 

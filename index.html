@@ -69,17 +69,30 @@
                   onchange="appTorneo.verificarBotonSorteo()"
                 >
                   <option value="">Seleccione la categoría...</option>
-                  <option value="10-9 Gup">10-9 Gup</option>
-                  <option value="8-7 Gup">8-7 Gup</option>
-                  <option value="6-5 Gup">6-5 Gup</option>
-                  <option value="4-3 Gup">4-3 Gup</option>
-                  <option value="2-1 Gup">2-1 Gup</option>
+                  <option value="1 Gup">1 Gup</option>
                   <option value="1er Dan">1er Dan</option>
                   <option value="2do Dan">2do Dan</option>
                   <option value="3er Dan">3er Dan</option>
                   <option value="4to Dan">4to Dan</option>
                   <option value="5to Dan">5to Dan</option>
+                  <option value="Personalizada">Personalizada</option>
                 </select>
+              </div>
+
+              <div
+                class="campo"
+                id="campoCategoriaPersonalizada"
+                style="display: none"
+              >
+                <label for="inputCategoriaPersonalizada">
+                  Nombre de la categoría personalizada:
+                </label>
+                <input
+                  type="text"
+                  id="inputCategoriaPersonalizada"
+                  placeholder="Ej: 10-9 gup, 8-4 Gup, 3-1 Gup..."
+                  oninput="appTorneo.verificarBotonSorteo()"
+                />
               </div>
 
               <div class="campo">
@@ -105,26 +118,26 @@
                 </button>
               </div>
             </div>
-
-            <table id="tablaCompetidores">
-              <thead>
-                <tr>
-                  <th>Competidor</th>
-                  <th>Ronda</th>
-                  <th>Forma</th>
-                  <th>Tiempo</th>
-                  <th>Juez 1</th>
-                  <th>Juez 2</th>
-                  <th>Juez 3</th>
-                  <th>Juez 4</th>
-                  <th>Juez 5</th>
-                  <th>SubTotal</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody id="listaPuntajes"></tbody>
-            </table>
-
+            <div class="table-container">
+              <table id="tablaCompetidores">
+                <thead>
+                  <tr>
+                    <th>Competidor</th>
+                    <th>Ronda</th>
+                    <th>Forma</th>
+                    <th>Tiempo</th>
+                    <th>Juez 1</th>
+                    <th>Juez 2</th>
+                    <th>Juez 3</th>
+                    <th>Juez 4</th>
+                    <th>Juez 5</th>
+                    <th>SubTotal</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody id="listaPuntajes"></tbody>
+              </table>
+            </div>
             <section
               class="seccion-podio"
               id="seccionPodio"

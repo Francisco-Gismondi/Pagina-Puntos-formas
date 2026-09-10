@@ -6,6 +6,38 @@
   const appTorneo = (function () {
     let contadorCompetidores = 0;
 
+    function getCategoriaActual() {
+      const select = document.getElementById("inputCategoria");
+      const inputCustom = document.getElementById(
+        "inputCategoriaPersonalizada",
+      );
+
+      if (!select) return "";
+
+      if (select.value === "Personalizada") {
+        if (inputCustom && inputCustom.value.trim()) {
+          return inputCustom.value.trim();
+        }
+        return "";
+      }
+
+      return select.value.trim();
+    }
+
+    function actualizarEstadoCategoriaPersonalizada() {
+      const select = document.getElementById("inputCategoria");
+      const contenedor = document.getElementById("campoCategoriaPersonalizada");
+      const inputCustom = document.getElementById(
+        "inputCategoriaPersonalizada",
+      );
+
+      if (!select || !contenedor || !inputCustom) return;
+
+      const esPersonalizada = select.value === "Personalizada";
+      contenedor.style.display = esPersonalizada ? "flex" : "none";
+      if (!esPersonalizada) inputCustom.value = "";
+    }
+
     function actualizarBotonesEliminar() {
       const botones = document.querySelectorAll(".btn-eliminar");
       const mostrar = botones.length > 1 ? "block" : "none";
@@ -278,11 +310,19 @@
     function verificarBotonSorteo() {
       const select = document.getElementById("inputCategoria");
       const contenedorSorteo = document.getElementById("contenedor_sorteo");
+      const categoriaActual = getCategoriaActual();
+
+      actualizarEstadoCategoriaPersonalizada();
 
       if (select && contenedorSorteo) {
-        contenedorSorteo.style.display = select.value.includes("Dan")
-          ? "flex"
-          : "none";
+        contenedorSorteo.style.display =
+          select.value === "Personalizada"
+            ? categoriaActual
+              ? "flex"
+              : "none"
+            : select.value.includes("Dan") || categoriaActual
+              ? "flex"
+              : "none";
       }
       guardarCaché(contadorCompetidores);
     }
@@ -295,7 +335,12 @@
         return;
       }
 
-      const categoriaSeleccionada = categoriaElement.value;
+      const categoriaSeleccionada = getCategoriaActual();
+
+      if (!categoriaSeleccionada) {
+        alert("Debes ingresar un nombre para la categoría personalizada.");
+        return;
+      }
 
       if (
         !confirm(
@@ -329,8 +374,7 @@
     }
 
     function sortearFormaEmpate() {
-      const categoriaActual =
-        document.getElementById("inputCategoria")?.value || "";
+      const categoriaActual = getCategoriaActual() || "default";
       const puntajes = [];
 
       for (let i = 1; i <= contadorCompetidores; i++) {
@@ -391,10 +435,8 @@
     }
 
     function exportarPDF() {
-      let catSelect = document.getElementById("inputCategoria");
-      let cat = (catSelect.value || "SinCategoria")
-        .trim()
-        .replace(/[\\/\\:*?"<>|]/g, "_");
+      const categoriaActual = getCategoriaActual() || "SinCategoria";
+      const cat = categoriaActual.trim().replace(/[\\/\\:*?"<>|]/g, "_");
 
       const edad =
         document
@@ -413,8 +455,7 @@
       if (confirm("¿Deseas descargar los datos actuales en formato Excel?")) {
         const datosExcel = [];
 
-        let catSelect = document.getElementById("inputCategoria");
-        const cat = catSelect.value || "";
+        const cat = getCategoriaActual() || "";
         const edad = document.getElementById("inputEdad").value || "";
         const catNombre =
           cat.trim().replace(/[\\/\\:*?"<>|]/g, "_") || "SinCategoria";
@@ -516,9 +557,18 @@
 
       if (estado) {
         let catSelect = document.getElementById("inputCategoria");
+        let inputCustom = document.getElementById(
+          "inputCategoriaPersonalizada",
+        );
+
         if (catSelect && estado.categoria) {
           catSelect.value = estado.categoria;
         }
+
+        if (inputCustom && estado.categoriaCustom) {
+          inputCustom.value = estado.categoriaCustom;
+        }
+
         document.getElementById("inputEdad").value = estado.edad || "";
 
         if (estado.competidores.length > 0) {

@@ -1,10 +1,18 @@
 .contenedor {
   max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
   background: white;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .controles-superiores {
@@ -137,9 +145,10 @@ th {
   margin: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   body {
     padding: 10px;
+    margin: 0;
   }
 
   .contenedor {
@@ -161,6 +170,15 @@ th {
 
   .grupo-botones button {
     width: 100%;
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+
+  .btn-eliminar,
+  .btn-desempate {
+    min-height: 40px;
+    padding: 8px 12px;
   }
 
   .encabezado-torneo {
@@ -176,10 +194,11 @@ th {
 
   .table-container {
     overflow-x: auto;
+    width: 100%;
   }
 
   table {
-    min-width: 820px;
+    min-width: 950px;
     border-spacing: 0;
   }
 
@@ -188,10 +207,44 @@ th {
     background-clip: padding-box;
   }
 
-  #tablaCompetidores td input,
+  #tablaCompetidores th:nth-child(3),
+  #tablaCompetidores td:nth-child(3) {
+    width: 160px;
+    min-width: 160px;
+  }
+
   #tablaCompetidores td select {
+    width: 100%;
+    min-width: 150px;
+    font-size: 0.85rem;
+  }
+
+  #tablaCompetidores td input {
     background-color: #ffffff;
     min-height: 36px;
+    font-size: 0.8rem;
+  }
+
+  #tablaCompetidores td input[type="number"] {
+    width: 55px;
+    min-width: 55px;
+    text-align: center;
+  }
+
+  @media (orientation: landscape) {
+    table {
+      min-width: 1100px;
+    }
+
+    #tablaCompetidores th:nth-child(3),
+    #tablaCompetidores td:nth-child(3) {
+      width: 180px;
+    }
+
+    #tablaCompetidores td select {
+      min-width: 170px;
+      font-size: 0.9rem;
+    }
   }
 
   .podio-container {
@@ -204,5 +257,43 @@ th {
   .puesto {
     min-width: 0;
     width: 100%;
+  }
+
+  .controles-superiores .grupo-botones .btn-agregar {
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    width: auto !important;
+    min-width: unset !important;
+    max-width: none !important;
+    height: 50px !important;
+    border-radius: 30px !important;
+    z-index: 1000 !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+    font-size: 15px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 0 20px !important;
+    margin: 0 !important;
+    gap: 8px !important;
+  }
+
+  #contenedor_sorteo .btn-agregar {
+    position: static !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    border-radius: 999px !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 10px 14px !important;
+    display: inline-flex !important;
+  }
+
+  .controles-superiores .grupo-botones .btn-agregar i.fas {
+    font-size: 18px !important;
+    margin: 0 !important;
   }
 }
