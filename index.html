@@ -100,11 +100,30 @@
 
               <div class="campo">
                 <label for="inputEdad">Edades:</label>
-                <input
-                  type="text"
+                <select
                   id="inputEdad"
-                  placeholder="Ej: 18 a 35 años..."
-                />
+                  onchange="appTorneo.verificarBotonSorteo()"
+                >
+                  <option value="">Seleccione la edad...</option>
+                  <option value="Cadete (12 a 13 años)">
+                    Cadete (12 a 13 años)
+                  </option>
+                  <option value="Junior (14 a 15 años)">
+                    Junior (14 a 15 años)
+                  </option>
+                  <option value="Juvenil (16 a 17 años)">
+                    Juvenil (16 a 17 años)
+                  </option>
+                  <option value="Adultos (18 a 34 años)">
+                    Adultos (18 a 34 años)
+                  </option>
+                  <option value="Veteranos Seniors (35 a 44 años)">
+                    Veteranos Seniors (35 a 44 años)
+                  </option>
+                  <option value="Veteranos (45 años o más)">
+                    Veteranos (45 años o más)
+                  </option>
+                </select>
               </div>
 
               <div

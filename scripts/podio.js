@@ -4,13 +4,24 @@
 
     for (let i = 1; i <= contadorCompetidores; i++) {
       const nombreInput = document.getElementById(`nombre_${i}`);
-      const totalCelda = document.getElementById(`total_${i}`);
+      const subtotal1 = document.getElementById(`subtotal_${i}_1`);
+      const subtotal2 = document.getElementById(`subtotal_${i}_2`);
+      const subtotal3 = document.getElementById(`subtotal_${i}_3`);
 
-      if (nombreInput && totalCelda) {
+      if (nombreInput) {
         const nombre = nombreInput.value.trim() || `Competidor ${i}`;
-        const total = parseFloat(totalCelda.innerText) || 0;
-        if (total > 0) {
-          competidores.push({ id: i, nombre, puntaje: total });
+        const base =
+          (parseFloat(subtotal1?.innerText) || 0) +
+          (parseFloat(subtotal2?.innerText) || 0);
+        const desempate = parseFloat(subtotal3?.innerText) || 0;
+
+        if (base > 0 || desempate > 0) {
+          competidores.push({
+            id: i,
+            nombre,
+            base,
+            desempate,
+          });
         }
       }
     }
@@ -32,7 +43,11 @@
       }
     }
 
-    competidores.sort((a, b) => b.puntaje - a.puntaje);
+    competidores.sort((a, b) => {
+      if (b.base !== a.base) return b.base - a.base;
+      if (b.desempate !== a.desempate) return b.desempate - a.desempate;
+      return 0;
+    });
 
     const podioDOM = document.getElementById("podioContainer");
     const seccionPodio = document.getElementById("seccionPodio");
@@ -50,17 +65,23 @@
 
     const rangos = [];
     let rangoActual = {
-      puntaje: competidores[0].puntaje,
+      puntaje: competidores[0].base,
+      desempate: competidores[0].desempate,
       competidores: [competidores[0]],
     };
 
     for (let i = 1; i < competidores.length; i++) {
-      if (competidores[i].puntaje === rangoActual.puntaje) {
+      const esMismoGrupo =
+        competidores[i].base === rangoActual.puntaje &&
+        competidores[i].desempate === rangoActual.desempate;
+
+      if (esMismoGrupo) {
         rangoActual.competidores.push(competidores[i]);
       } else {
         rangos.push(rangoActual);
         rangoActual = {
-          puntaje: competidores[i].puntaje,
+          puntaje: competidores[i].base,
+          desempate: competidores[i].desempate,
           competidores: [competidores[i]],
         };
       }
@@ -68,60 +89,124 @@
 
     rangos.push(rangoActual);
 
-    let huboEmpate = false;
+    const indicePrimerEmpate = rangos.findIndex(
+      (rango) => rango.competidores.length > 1,
+    );
+    const rangosPodio = rangos.slice(0, 3).map((rango, index) => {
+      if (indicePrimerEmpate !== -1 && index > indicePrimerEmpate) {
+        return {
+          ...rango,
+          competidores: [rango.competidores[0]],
+        };
+      }
+      return rango;
+    });
 
-    for (const rango of rangos) {
-      if (rango.puntaje > 0 && rango.competidores.length > 1) {
-        huboEmpate = true;
-        rango.competidores.forEach((comp) => {
-          const btn = document.getElementById(`btn_desempate_${comp.id}`);
-          if (btn) btn.style.display = "block";
-        });
+    const gruposPodio = (() => {
+      const gruposValidos = [];
+      for (const rango of rangos) {
+        if (rango.competidores.length > 1) {
+          gruposValidos.push(rango);
+          break;
+        }
+      }
+      return gruposValidos;
+    })();
+    const idsEmpatePodio = new Set();
+
+    gruposPodio.forEach((rango) => {
+      rango.competidores.forEach((comp) => idsEmpatePodio.add(comp.id));
+    });
+
+    for (let i = 1; i <= contadorCompetidores; i++) {
+      const btn = document.getElementById(`btn_desempate_${i}`);
+      const fila3 = document.getElementById(`fila_3_${i}`);
+      const tdNombre = document.getElementById(`celda_nombre_${i}`);
+      const tdTotal = document.getElementById(`total_${i}`);
+      const perteneceAlPodioEmpatado = idsEmpatePodio.has(i);
+      const filaActiva =
+        (fila3 && fila3.style.display !== "none") ||
+        (fila3 && fila3.dataset.activo === "true");
+
+      if (btn) {
+        btn.style.display =
+          perteneceAlPodioEmpatado || filaActiva ? "block" : "none";
+      }
+
+      if (fila3) {
+        if (perteneceAlPodioEmpatado || filaActiva) {
+          fila3.style.display = "table-row";
+          if (tdNombre) tdNombre.rowSpan = 3;
+          if (tdTotal) tdTotal.rowSpan = 3;
+        } else {
+          fila3.style.display = "none";
+          if (tdNombre) tdNombre.rowSpan = 2;
+          if (tdTotal) tdTotal.rowSpan = 2;
+        }
       }
     }
 
     if (accionesPodio) {
-      accionesPodio.style.display = huboEmpate ? "block" : "none";
+      accionesPodio.style.display = gruposPodio.length > 0 ? "block" : "none";
     }
 
-    function armarEscalon(rango, claseCss, titulo) {
+    function armarEscalon(rango, claseCss, titulo, etiquetaPosicion, detalle) {
       const esEmpate = rango.competidores.length > 1;
       const nombresHTML = rango.competidores
         .map((c) => c.nombre)
         .join("<br><small><i>y</i></small><br>");
-      const alerta = esEmpate
-        ? '<div class="alerta-empate">⚠️ Desempate</div>'
-        : "";
+      const desempateTexto =
+        rango.competidores.length === 1 && rango.desempate > 0
+          ? `<div class="alerta-empate"> Puntos Desempate: ${rango.desempate} pts</div>`
+          : esEmpate
+            ? `<div class="alerta-empate">⚠️ ${detalle || `Desempate por ${etiquetaPosicion}`}</div>`
+            : "";
 
       return `
         <div class="puesto ${claseCss}">
           ${titulo}<br>
           <span class="nombres-podio">${nombresHTML}</span>
           <span>${rango.puntaje} pts</span>
-          ${alerta}
+          ${desempateTexto}
         </div>
       `;
     }
 
-    const htmlOro = rangos[0] ? armarEscalon(rangos[0], "oro", "1°") : "";
-    const indicePlata = rangos[0] && rangos[0].competidores.length > 1 ? -1 : 1;
-    const indiceBronce =
-      indicePlata === 1
-        ? rangos[1] && rangos[1].competidores.length > 1
-          ? -1
-          : 2
-        : rangos[0].competidores.length > 2
-          ? -1
-          : 1;
+    const htmlOro = rangosPodio[0]
+      ? armarEscalon(
+          rangosPodio[0],
+          "oro",
+          "1°",
+          "1° puesto",
+          rangosPodio[0].competidores.length > 1
+            ? "Desempate por 1° puesto"
+            : "Puntaje base",
+        )
+      : "";
 
-    const htmlPlata =
-      indicePlata !== -1 && rangos[indicePlata]
-        ? armarEscalon(rangos[indicePlata], "plata", "2°")
-        : "";
-    const htmlBronce =
-      indiceBronce !== -1 && rangos[indiceBronce]
-        ? armarEscalon(rangos[indiceBronce], "bronce", "3°")
-        : "";
+    const htmlPlata = rangosPodio[1]
+      ? armarEscalon(
+          rangosPodio[1],
+          "plata",
+          "2°",
+          "2° puesto",
+          rangosPodio[1].competidores.length > 1
+            ? "Desempate por 2° puesto"
+            : "Puntaje base",
+        )
+      : "";
+
+    const htmlBronce = rangosPodio[2]
+      ? armarEscalon(
+          rangosPodio[2],
+          "bronce",
+          "3°",
+          "3° puesto",
+          rangosPodio[2].competidores.length > 1
+            ? "Desempate por 3° puesto"
+            : "Puntaje base",
+        )
+      : "";
 
     podioDOM.innerHTML = htmlOro + htmlPlata + htmlBronce;
 
