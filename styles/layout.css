@@ -149,11 +149,13 @@ th {
   body {
     padding: 10px;
     margin: 0;
+    box-sizing: border-box;
   }
 
   .contenedor {
     padding: 12px;
     border-radius: 6px;
+    box-sizing: border-box;
   }
 
   .controles-superiores {
@@ -232,6 +234,25 @@ th {
   }
 
   @media (orientation: landscape) {
+    .controles-superiores {
+      flex-direction: row;
+      align-items: stretch;
+      gap: 10px;
+    }
+
+    .grupo-botones {
+      flex-direction: row;
+      width: auto;
+      flex: 1;
+      flex-wrap: wrap;
+    }
+
+    .grupo-botones button {
+      width: auto;
+      min-width: 0;
+      flex: 1;
+    }
+
     table {
       min-width: 1100px;
     }
