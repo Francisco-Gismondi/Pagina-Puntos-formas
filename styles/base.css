@@ -1,7 +1,7 @@
 html,
 body {
   width: 100%;
-  overflow-x: hidden; /* Evita que la página entera se mueva hacia los costados */
+  overflow-x: hidden;
   margin: 0;
   padding: 0;
 }
@@ -18,7 +18,7 @@ body {
 .page-shell {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh; /* La 'd' (dynamic) calcula el alto restando la barra de Safari automáticamente */
+  min-height: 100dvh;
   width: 100%;
 }
 input[type="number"],
