@@ -28,6 +28,14 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
   border: 1px solid #dee2e6;
 }
+.numero-competidor {
+  text-align: left;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 10px;
+  color: #1a2c42;
+}
 
 .grupo-botones {
   display: flex;

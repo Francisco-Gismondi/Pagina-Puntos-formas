@@ -153,7 +153,8 @@
       const html = `
         <tr id="fila_1_${id}">
           <td id="celda_nombre_${id}" rowspan="2" style="vertical-align: middle;">
-            <input type="text" id="nombre_${id}" placeholder="Nombre competidor...">
+          <p class="numero-competidor ocultar-en-pdf">${id}</p>
+            <input type="text" id="nombre_${id}" placeholder="Numero/Nombre competidor...">
             <button id="btn_desempate_${id}" class="btn-desempate ocultar-en-pdf" style="display: none;" data-id="${id}">
               <i class="fas fa-scale-balanced"></i> Desempate
             </button>
