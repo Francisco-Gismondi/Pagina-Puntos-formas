@@ -1,6 +1,6 @@
 (function () {
   const { TULES, generarOpcionesTules, sortearFormas } = window.TorneoTules;
-  const { guardarCaché, cargarCaché, limpiarCaché } = window.TorneoStorage;
+  const { guardarCache, cargarCache, limpiarCache } = window.TorneoStorage;
   const { calcularPodio } = window.TorneoPodio;
 
   const appTorneo = (function () {
@@ -51,54 +51,72 @@
         `tiempo_${idCompetidor}_${ronda}`,
       );
       if (celdaTiempo) celdaTiempo.innerText = tiempo;
-      guardarCaché(contadorCompetidores);
+      guardarCache(contadorCompetidores);
     }
 
-    function procsarNotas(id, ronda) {
+    function procesarNotas(id, ronda) {
       const notasObj = [];
 
       for (let j = 1; j <= 5; j++) {
         const input = document.getElementById(`j${j}_${id}_${ronda}`);
         if (!input) continue;
 
-        let valor = parseInt(input.value, 10);
-        if (valor > 100) {
-          valor = 100;
-          input.value = 100;
-        } else if (valor < 0) {
-          valor = 0;
-          input.value = 0;
-        }
-
-        if (Number.isNaN(valor)) valor = 0;
-
+        // Limpiamos la clase visual por defecto
         input.classList.remove("juez-descartado");
-        notasObj.push({ elemento: input, valor });
-      }
 
-      if (notasObj.length === 0) return;
+        // Solo tomamos en cuenta los casilleros donde realmente se escribió un número
+        if (input.value.trim() !== "") {
+          let valor = parseInt(input.value, 10);
 
-      let indexMax = 0;
-      for (let i = 1; i < notasObj.length; i++) {
-        if (notasObj[i].valor > notasObj[indexMax].valor) indexMax = i;
-      }
+          // Control de límites
+          if (valor > 100) {
+            valor = 100;
+            input.value = 100;
+          } else if (valor < 0) {
+            valor = 0;
+            input.value = 0;
+          }
 
-      let indexMin = -1;
-      let minVal = Infinity;
-      for (let i = 0; i < notasObj.length; i++) {
-        if (i === indexMax) continue;
-        if (notasObj[i].valor < minVal) {
-          minVal = notasObj[i].valor;
-          indexMin = i;
+          if (Number.isNaN(valor)) valor = 0;
+
+          notasObj.push({ elemento: input, valor });
         }
       }
-
-      notasObj[indexMax].elemento.classList.add("juez-descartado");
-      notasObj[indexMin].elemento.classList.add("juez-descartado");
 
       let subtotal = 0;
-      for (let i = 0; i < notasObj.length; i++) {
-        if (i !== indexMax && i !== indexMin) subtotal += notasObj[i].valor;
+
+      if (notasObj.length > 0) {
+        // Solo aplicamos la regla de descartar extremos si hay al menos 3 notas cargadas
+        if (notasObj.length >= 3) {
+          let indexMax = 0;
+          for (let i = 1; i < notasObj.length; i++) {
+            if (notasObj[i].valor > notasObj[indexMax].valor) indexMax = i;
+          }
+
+          let indexMin = -1;
+          let minVal = Infinity;
+          for (let i = 0; i < notasObj.length; i++) {
+            if (i === indexMax) continue;
+            if (notasObj[i].valor < minVal) {
+              minVal = notasObj[i].valor;
+              indexMin = i;
+            }
+          }
+
+          if (indexMax !== -1 && notasObj[indexMax]) {
+            notasObj[indexMax].elemento.classList.add("juez-descartado");
+          }
+          if (indexMin !== -1 && notasObj[indexMin]) {
+            notasObj[indexMin].elemento.classList.add("juez-descartado");
+          }
+        }
+
+        // Sumamos exclusivamente las notas que sobrevivieron al filtro
+        for (let i = 0; i < notasObj.length; i++) {
+          if (!notasObj[i].elemento.classList.contains("juez-descartado")) {
+            subtotal += notasObj[i].valor;
+          }
+        }
       }
 
       const subtotalEl = document.getElementById(`subtotal_${id}_${ronda}`);
@@ -121,7 +139,7 @@
       const total = document.getElementById(`total_${id}`);
       if (total) total.innerText = (sub1 + sub2 + sub3).toFixed(0);
 
-      guardarCaché(contadorCompetidores);
+      guardarCache(contadorCompetidores);
     }
 
     function agregarCompetidor(datos = null) {
@@ -196,7 +214,7 @@
 
       if (nombreInput) {
         nombreInput.addEventListener("input", () =>
-          guardarCaché(contadorCompetidores),
+          guardarCache(contadorCompetidores),
         );
       }
 
@@ -216,7 +234,7 @@
           const input = document.getElementById(`j${j}_${id}_${ronda}`);
           if (input) {
             input.addEventListener("input", () => {
-              procsarNotas(id, ronda);
+              procesarNotas(id, ronda);
             });
           }
         }
@@ -240,7 +258,7 @@
             }
           }
 
-          procsarNotas(id, ronda);
+          procesarNotas(id, ronda);
         }
 
         if (datos.desempateActivo) toggleDesempate(id, true);
@@ -289,7 +307,7 @@
         actualizarTotal(id);
       }
 
-      guardarCaché(contadorCompetidores);
+      guardarCache(contadorCompetidores);
     }
 
     function eliminarCompetidor(id) {
@@ -303,7 +321,7 @@
         if (f3) f3.remove();
 
         actualizarBotonesEliminar();
-        guardarCaché(contadorCompetidores);
+        guardarCache(contadorCompetidores);
       }
     }
 
@@ -330,7 +348,7 @@
           ? "flex"
           : "none";
       }
-      guardarCaché(contadorCompetidores);
+      guardarCache(contadorCompetidores);
     }
 
     function sortearYAsignar() {
@@ -381,44 +399,100 @@
         }
       }
 
-      guardarCaché(contadorCompetidores);
+      guardarCache(contadorCompetidores);
     }
 
     function sortearFormaEmpate() {
       const categoriaActual = getCategoriaActual() || "default";
-      const puntajes = [];
+      const competidoresActivos = [];
 
+      // 1. Recopilamos la base y el desempate (sin exigir que tengan el nombre escrito)
       for (let i = 1; i <= contadorCompetidores; i++) {
-        const totalEl = document.getElementById(`total_${i}`);
-        if (!totalEl) continue;
+        const inputNombre = document.getElementById(`nombre_${i}`);
+        if (!inputNombre) continue;
 
-        const total = parseFloat(totalEl.innerText) || 0;
-        if (total > 0) {
-          puntajes.push({ id: i, total });
+        const sub1 =
+          parseFloat(document.getElementById(`subtotal_${i}_1`)?.innerText) ||
+          0;
+        const sub2 =
+          parseFloat(document.getElementById(`subtotal_${i}_2`)?.innerText) ||
+          0;
+        const desempate =
+          parseFloat(document.getElementById(`subtotal_${i}_3`)?.innerText) ||
+          0;
+        const base = sub1 + sub2;
+
+        if (base > 0 || desempate > 0) {
+          competidoresActivos.push({ id: i, base, desempate });
         }
       }
 
-      if (puntajes.length === 0) {
-        alert("No hay competidores con puntaje para desempatar.");
+      if (competidoresActivos.length === 0) {
+        alert("No hay competidores con puntaje para evaluar empates.");
         return;
       }
 
-      const maximo = Math.max(
-        ...puntajes.map((competidor) => competidor.total),
-      );
-      const empatados = puntajes.filter(
-        (competidor) => competidor.total === maximo,
-      );
+      // 2. Los ordenamos exactamente igual que en el podio (Base primero, Desempate después)
+      competidoresActivos.sort((a, b) => {
+        if (b.base !== a.base) return b.base - a.base;
+        if (b.desempate !== a.desempate) return b.desempate - a.desempate;
+        return 0;
+      });
 
-      if (empatados.length < 2) {
-        alert("No hay empate en el primer puesto para sortear una forma.");
+      // 3. Agrupamos a los que están ESTRICTAMENTE empatados en todo
+      const rangos = [];
+      let rangoActual = {
+        base: competidoresActivos[0].base,
+        desempate: competidoresActivos[0].desempate,
+        competidores: [competidoresActivos[0]],
+      };
+
+      for (let i = 1; i < competidoresActivos.length; i++) {
+        const comp = competidoresActivos[i];
+        if (
+          comp.base === rangoActual.base &&
+          comp.desempate === rangoActual.desempate
+        ) {
+          rangoActual.competidores.push(comp);
+        } else {
+          rangos.push(rangoActual);
+          rangoActual = {
+            base: comp.base,
+            desempate: comp.desempate,
+            competidores: [comp],
+          };
+        }
+      }
+      rangos.push(rangoActual);
+
+      // 4. Buscamos el primer empate real que esté dentro del Top 3
+      let lugaresOcupados = 0;
+      let empatesEnPodio = [];
+
+      for (const rango of rangos) {
+        if (lugaresOcupados >= 3) break; // Si ya pasamos el 3er lugar, dejamos de buscar
+
+        if (rango.competidores.length > 1) {
+          empatesEnPodio.push(rango.competidores); // Guardamos todos los empates detectados
+        }
+        lugaresOcupados += rango.competidores.length;
+      }
+
+      if (empatesEnPodio.length === 0) {
+        alert(
+          "No se detectaron empates pendientes en zona de podio (1°, 2° o 3° puesto).",
+        );
         return;
       }
 
-      empatados.forEach((competidor) => {
-        toggleDesempate(competidor.id, true);
+      // 5. Invertimos la prioridad: Tomamos el ÚLTIMO empate detectado (el puesto menor)
+      const empatadosParaSortear = empatesEnPodio[empatesEnPodio.length - 1];
 
-        const select = document.getElementById(`forma_${competidor.id}_3`);
+      // Aplicamos el sorteo solo a esos competidores
+      empatadosParaSortear.forEach((comp) => {
+        toggleDesempate(comp.id, true);
+
+        const select = document.getElementById(`forma_${comp.id}_3`);
         if (!select) return;
 
         const formasSorteadas = sortearFormas(categoriaActual || "default");
@@ -426,11 +500,11 @@
           Math.random() < 0.5 ? formasSorteadas.forma1 : formasSorteadas.forma2;
 
         select.value = formaElegida;
-        actualizarTiempo(select, competidor.id, 3);
+        actualizarTiempo(select, comp.id, 3);
       });
 
       alert(
-        `Se sorteó la forma de desempate entre ${empatados.length} competidores empatados.`,
+        `Se sorteó la forma de desempate para los ${empatadosParaSortear.length} competidores empatados con ${empatadosParaSortear[0].base} puntos (Puesto menor priorizado).`,
       );
     }
 
@@ -440,7 +514,7 @@
           "¿Estás seguro de reiniciar la planilla? Se borrará todo para comenzar una nueva categoría.",
         )
       ) {
-        limpiarCaché();
+        limpiarCache();
         location.reload();
       }
     }
@@ -564,7 +638,7 @@
     }
 
     function cargarEstadoGuardado() {
-      const estado = cargarCaché();
+      const estado = cargarCache();
 
       if (estado) {
         let catSelect = document.getElementById("inputCategoria");
@@ -584,7 +658,7 @@
 
         if (estado.competidores.length > 0) {
           estado.competidores.forEach((comp) => agregarCompetidor(comp));
-          calcularPodio(contadorCompetidores);
+          //calcularPodio(contadorCompetidores);
         } else {
           agregarCompetidor();
         }
@@ -601,14 +675,14 @@
       toggleDesempate,
       eliminarCompetidor,
       actualizarTiempo,
-      procsarNotas,
+      procesarNotas,
       actualizarTotal,
       sortearYAsignar,
       sortearFormaEmpate,
       verificarBotonSorteo,
       calcularPodio: () => calcularPodio(contadorCompetidores),
-      guardarCaché: () => guardarCaché(contadorCompetidores),
-      cargarCaché: cargarEstadoGuardado,
+      guardarCache: () => guardarCache(contadorCompetidores),
+      cargarCache: cargarEstadoGuardado,
       reiniciarPlanilla,
       exportarPDF,
       exportarExcel,
@@ -619,8 +693,5 @@
 })();
 
 window.onload = function () {
-  appTorneo.cargarCaché();
-  document
-    .querySelector(".contenedor")
-    .addEventListener("input", () => appTorneo.guardarCaché());
+  appTorneo.cargarCache();
 };

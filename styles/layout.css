@@ -121,8 +121,33 @@ th {
   width: 100%;
 }
 
+.title-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.titulo-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: fit-content;
+  margin: 0 auto;
+  color: inherit;
+  text-decoration: none;
+}
+
+.titulo-icono {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(26, 44, 66, 0.15));
+}
+
 .titulo-pagina {
-  margin: 0 0 16px;
+  margin: 0;
   font-size: 1.6rem;
   text-align: center;
   color: #1a2c42;

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manual de Usuario - Sistema Taekwondo</title>
+    <link rel="stylesheet" href="../styles/manual.css" />
+    <!-- Agregamos FontAwesome para que los iconos del manual funcionen igual que en la app -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body class="manual-page-body">
+    <div class="contenedor manual-page">
+      <h1>Manual de Usuario</h1>
+      <p class="manual-subtitle">Sistema de Puntuación de Formas - Taekwondo</p>
+
+      <h2>1. Configuración Inicial del Torneo</h2>
+      <p>
+        Antes de comenzar a evaluar a los competidores, es fundamental
+        configurar la información básica de la llave actual.
+      </p>
+      <ul>
+        <li>
+          <strong>Seleccionar Categoría y Edad:</strong> Utilice los menús
+          desplegables superiores para definir la categoría (ej. 1er Dan) y el
+          rango de edad. Si la categoría no está en la lista, seleccione
+          "Personalizada" e ingrese el nombre manualmente.
+        </li>
+        <li>
+          <strong>Agregar Competidores:</strong> Haga clic en el botón
+          <span class="btn-badge bg-success"
+            ><i class="fas fa-user-plus"></i> Agregar Competidor</span
+          >
+          por cada participante de la llave.
+        </li>
+        <li>
+          <strong>Manejo de Pestañas (Multicategoría):</strong> El sistema
+          permite gestionar diferentes categorías al mismo tiempo. Puede abrir
+          la aplicación en varias pestañas del navegador; la información de una
+          pestaña no interferirá con la otra.
+        </li>
+      </ul>
+
+      <h2>2. Dinámica de Puntuación</h2>
+      <p>
+        El sistema automatiza la asignación de formas y el cálculo matemático de
+        los puntajes.
+      </p>
+      <ul>
+        <li>
+          <strong>Sorteo de Formas:</strong> Una vez cargados los nombres,
+          presione
+          <span class="btn-badge bg-accent"
+            ><i class="fas fa-dice"></i> Sortear Formas</span
+          >. El sistema asignará aleatoriamente dos Tules apropiados para la
+          categoría seleccionada a cada competidor y completará los tiempos
+          reglamentarios.
+        </li>
+        <li>
+          <strong>Carga de Notas:</strong> Ingrese la puntuación de los 5 jueces
+          en los casilleros correspondientes (0 a 100).
+        </li>
+        <li>
+          <strong>Cálculo Automático:</strong> Al ingresar las notas, el sistema
+          descartará automáticamente la nota más alta y la más baja (marcándolas
+          visualmente) y sumará las tres restantes para generar el Subtotal de
+          la ronda. No es necesario presionar ningún botón de "Guardar".
+        </li>
+      </ul>
+
+      <h2>3. Gestión de Empates</h2>
+      <p>
+        El sistema está diseñado para manejar empates complejos en zona de
+        medallas (1°, 2° y 3° puesto).
+      </p>
+      <ul>
+        <li>
+          <strong>Alerta Visual:</strong> Si al finalizar la segunda ronda dos o
+          más competidores tienen el mismo puntaje total, se considerará un
+          empate.
+        </li>
+        <li>
+          <strong>Sorteo de Desempate Automático:</strong> Presione el botón
+          <span class="btn-badge bg-accent"
+            ><i class="fas fa-dice"></i> Sortear Forma de Empate</span
+          >. El sistema detectará automáticamente quiénes están empatados,
+          priorizando siempre resolver primero los empates de menor jerarquía
+          (ej. desempatar primero el 3° puesto, y luego el 1° puesto).
+        </li>
+        <li>
+          <strong>Fila Adicional:</strong> Al ejecutar el sorteo, se desplegará
+          una tercera fila ("Desempate") exclusivamente para los competidores
+          involucrados, indicando la nueva forma a evaluar.
+        </li>
+      </ul>
+
+      <h2>4. Finalización y Exportación</h2>
+      <p>
+        Una vez que todos los competidores tengan sus puntajes y los empates
+        estén resueltos, se procede al cierre de la llave.
+      </p>
+      <ul>
+        <li>
+          <strong>Calcular Podio:</strong> Haga clic en
+          <span class="btn-badge bg-warning"
+            ><i class="fas fa-trophy"></i> Calcular Podio</span
+          >. El sistema ordenará a los competidores y mostrará a los ganadores
+          del Oro, Plata y Bronce en la parte inferior de la pantalla, indicando
+          si las posiciones se ganaron por puntaje base o por desempate.
+        </li>
+        <li>
+          <strong>Exportar Planilla:</strong> Utilice los botones
+          <span
+            class="btn-badge"
+            style="background-color: #198754; color: white"
+            ><i class="fas fa-file-excel"></i> Exportar a Excel</span
+          >
+          o
+          <span
+            class="btn-badge"
+            style="background-color: #6f42c1; color: white"
+            ><i class="fas fa-file-pdf"></i> Exportar a PDF</span
+          >
+          para guardar un registro oficial. El nombre del archivo se generará
+          automáticamente incluyendo la categoría y la edad.
+        </li>
+        <li>
+          <strong>Siguiente Llave:</strong> Presione
+          <span class="btn-badge bg-danger"
+            ><i class="fas fa-sync-alt"></i> Reiniciar Plantilla</span
+          >
+          para limpiar el sistema y comenzar con la siguiente categoría.
+        </li>
+      </ul>
+
+      <h2>5. Casos Frecuentes y Resolución de Problemas</h2>
+
+      <div class="caso-estudio">
+        <strong>Caso A: Me equivoqué al tipear la nota de un juez</strong><br />
+        Solución: Simplemente borre el número incorrecto y escriba el nuevo. El
+        sistema recalculará los descartes (nota mayor y menor) y actualizará el
+        subtotal y el total de forma inmediata y automática. No es necesario
+        borrar toda la fila.
+      </div>
+
+      <div class="caso-estudio">
+        <strong>Caso B: Se abrió una fila de desempate por error</strong><br />
+        Solución: Si un competidor tiene abierta la tercera fila de "Desempate"
+        pero no debería tenerla, presione el botón
+        <span class="btn-badge bg-desempate"
+          ><i class="fas fa-times-circle"></i> Quitar Desempate</span
+        >
+        ubicado debajo de su nombre. Esto cerrará la fila y borrará cualquier
+        nota que se haya ingresado allí por accidente, normalizando el puntaje
+        del competidor.
+      </div>
+
+      <div class="caso-estudio">
+        <strong
+          >Caso C: Hay un empate en el 1° puesto y otro en el 3° puesto al mismo
+          tiempo</strong
+        ><br />
+        Solución: Presione el botón de sorteo de empate. El sistema abrirá solo
+        las filas de los competidores que empataron por el 3° puesto. Una vez
+        que cargue sus notas y defina el Bronce, vuelva a presionar el botón de
+        sorteo; el sistema avanzará automáticamente al siguiente empate (el del
+        1° puesto).
+      </div>
+
+      <div class="caso-estudio">
+        <strong
+          >Caso D: Ocurre un segundo empate (Empate en la ronda de
+          desempate)</strong
+        ><br />
+        Solución: El reglamento indica que se deben sortear formas hasta que se
+        defina un ganador. En el sistema, diríjase a la fila de desempate de los
+        competidores involucrados, borre manualmente las 5 notas cargadas por
+        los jueces, abra el menú desplegable, seleccione una nueva forma y
+        vuelva a cargar los nuevos puntajes.
+      </div>
+
+      <div class="caso-estudio">
+        <strong
+          >Caso E: Recargué la página por accidente (F5) o cerré el
+          navegador</strong
+        ><br />
+        Solución: Sus datos están protegidos. El sistema guarda una copia de
+        seguridad en cada pulsación de tecla. Al recargar la página, verá a
+        todos sus competidores y notas exactamente donde los dejó. (Nota: La
+        memoria se borra únicamente si se cierra la pestaña por completo).
+      </div>
+    </div>
+
+    <footer class="manual-footer">
+      <nav class="manual-footer-nav" aria-label="Navegación del manual">
+        <a href="../index.html">Volver a la planilla</a>
+        <a href="./manual.html">Manual</a>
+      </nav>
+      <p>Desarrollado por <strong>FranGis</strong></p>
+    </footer>
+  </body>
+</html>

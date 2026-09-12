@@ -1,0 +1,210 @@
+:root {
+  --manual-bg: #f4f6f9;
+  --manual-surface: #ffffff;
+  --manual-surface-soft: #f8f9fa;
+  --manual-primary: #1a2c42;
+  --manual-primary-soft: #dfeaf7;
+  --manual-accent: #17a2b8;
+  --manual-success: #28a745;
+  --manual-warning: #ffc107;
+  --manual-danger: #dc3545;
+  --manual-text: #1f2937;
+  --manual-muted: #5b6471;
+  --manual-border: #dee2e6;
+  --manual-shadow: 0 14px 30px rgba(26, 44, 66, 0.1);
+}
+
+body.manual-page-body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #edf2f7 0%, var(--manual-bg) 100%);
+  color: var(--manual-text);
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.manual-page {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: clamp(1.5rem, 2vw, 2.5rem);
+  background: var(--manual-surface);
+  border: 1px solid var(--manual-border);
+  border-radius: 22px;
+  box-shadow: var(--manual-shadow);
+}
+
+.manual-page h1 {
+  margin: 0 0 0.5rem;
+  color: var(--manual-primary);
+  font-size: clamp(2rem, 2.8vw, 2.8rem);
+  line-height: 1.15;
+  text-align: center;
+  letter-spacing: -0.03em;
+}
+
+.manual-subtitle {
+  margin: 0 0 2rem;
+  text-align: center;
+  color: var(--manual-muted);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.manual-page h2 {
+  margin: 2.2rem 0 0.8rem;
+  padding-bottom: 0.45rem;
+  color: var(--manual-primary);
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
+  border-bottom: 2px solid var(--manual-primary-soft);
+}
+
+.manual-page p,
+.manual-page li {
+  color: var(--manual-text);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.manual-page ul {
+  margin: 0.8rem 0 1.2rem 1.2rem;
+  padding-left: 1rem;
+}
+
+.manual-page li {
+  margin-bottom: 0.65rem;
+}
+
+.manual-page li::marker {
+  color: var(--manual-accent);
+  font-weight: 700;
+}
+
+.manual-page strong {
+  color: var(--manual-primary);
+}
+
+.manual-page .caso-estudio {
+  margin: 1rem 0;
+  padding: 1rem 1.1rem;
+  background: linear-gradient(
+    135deg,
+    rgba(23, 162, 184, 0.07),
+    rgba(26, 44, 66, 0.03)
+  );
+  border: 1px solid rgba(23, 162, 184, 0.25);
+  border-left: 5px solid var(--manual-accent);
+  border-radius: 14px;
+  color: var(--manual-text);
+  box-shadow: 0 8px 18px rgba(23, 162, 184, 0.06);
+}
+
+.manual-page .caso-estudio strong {
+  display: inline-block;
+  margin-bottom: 0.35rem;
+}
+
+.manual-footer {
+  max-width: 1100px;
+  margin: 1.25rem auto 2rem;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--manual-border);
+  border-radius: 16px;
+  box-shadow: 0 10px 20px rgba(26, 44, 66, 0.05);
+  text-align: center;
+}
+
+.manual-footer-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.manual-footer a,
+.footer-links a {
+  color: var(--manual-primary);
+  text-decoration: none;
+  font-weight: 700;
+  transition: opacity 0.2s ease;
+}
+
+.manual-footer a:hover,
+.footer-links a:hover {
+  opacity: 0.75;
+}
+
+.manual-footer p,
+.footer-links {
+  margin: 0;
+  color: var(--manual-muted);
+  font-size: 0.9rem;
+}
+
+.btn-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.28rem 0.7rem;
+  min-height: 28px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  vertical-align: middle;
+  box-shadow: 0 2px 8px rgba(26, 44, 66, 0.1);
+}
+
+.bg-success {
+  background: var(--manual-success);
+  color: white;
+}
+
+.bg-accent {
+  background: var(--manual-accent);
+  color: white;
+}
+
+.bg-warning {
+  background: var(--manual-warning);
+  color: #1f2937;
+}
+
+.bg-danger {
+  background: var(--manual-danger);
+  color: white;
+}
+
+.bg-desempate {
+  background-color: transparent;
+  color: #fd7e14;
+  border: 1px solid #fd7e14;
+}
+
+@media (max-width: 768px) {
+  .manual-page {
+    margin: 20px 12px;
+    padding: 1.1rem 1rem;
+    border-radius: 16px;
+  }
+
+  .manual-page h1 {
+    font-size: 2rem;
+  }
+
+  .manual-page h2 {
+    margin-top: 1.6rem;
+  }
+
+  .manual-page ul {
+    margin-left: 0.8rem;
+    padding-left: 0.7rem;
+  }
+
+  .btn-badge {
+    display: inline-block;
+    margin: 0.12rem 0;
+    white-space: nowrap;
+  }
+}

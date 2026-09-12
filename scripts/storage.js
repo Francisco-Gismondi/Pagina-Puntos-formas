@@ -1,5 +1,5 @@
 (function () {
-  const STORAGE_KEY = "torneoTaekwondoCaché";
+  const STORAGE_KEY = "torneoTaekwondoCache";
 
   function serializarEstado({
     categoria,
@@ -55,7 +55,7 @@
     return estado;
   }
 
-  function guardarCaché(contadorCompetidores) {
+  function guardarCache(contadorCompetidores) {
     const estado = serializarEstado({
       categoria: document.getElementById("inputCategoria")
         ? document.getElementById("inputCategoria").value
@@ -69,29 +69,33 @@
       contadorCompetidores,
     });
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
+    } catch (error) {
+      console.warn("Cache bloqueada por el navegador.");
+    }
   }
 
-  function cargarCaché() {
-    const raw = localStorage.getItem(STORAGE_KEY);
+  function cargarCache() {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
 
     try {
       return JSON.parse(raw);
     } catch (error) {
-      console.warn("No se pudo cargar el caché del torneo:", error);
+      console.warn("No se pudo cargar el cache del torneo:", error);
       return null;
     }
   }
 
-  function limpiarCaché() {
-    localStorage.removeItem(STORAGE_KEY);
+  function limpiarCache() {
+    sessionStorage.removeItem(STORAGE_KEY);
   }
 
   window.TorneoStorage = {
     serializarEstado,
-    guardarCaché,
-    cargarCaché,
-    limpiarCaché,
+    guardarCache,
+    cargarCache,
+    limpiarCache,
   };
 })();

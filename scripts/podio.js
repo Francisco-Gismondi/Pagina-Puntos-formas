@@ -89,35 +89,27 @@
 
     rangos.push(rangoActual);
 
-    const indicePrimerEmpate = rangos.findIndex(
-      (rango) => rango.competidores.length > 1,
-    );
-    const rangosPodio = rangos.slice(0, 3).map((rango, index) => {
-      if (indicePrimerEmpate !== -1 && index > indicePrimerEmpate) {
-        return {
-          ...rango,
-          competidores: [rango.competidores[0]],
-        };
-      }
-      return rango;
-    });
-
     const gruposPodio = (() => {
       const gruposValidos = [];
+      // Solo nos importan los primeros 3 puestos reales para activar desempates
+      let lugaresOcupados = 0;
       for (const rango of rangos) {
+        if (lugaresOcupados >= 3) break;
+
         if (rango.competidores.length > 1) {
           gruposValidos.push(rango);
-          break;
         }
+        lugaresOcupados += rango.competidores.length;
       }
       return gruposValidos;
     })();
-    const idsEmpatePodio = new Set();
 
+    const idsEmpatePodio = new Set();
     gruposPodio.forEach((rango) => {
       rango.competidores.forEach((comp) => idsEmpatePodio.add(comp.id));
     });
 
+    // 3. (El bucle de visibilidad de botones se mantiene igual aquí)
     for (let i = 1; i <= contadorCompetidores; i++) {
       const btn = document.getElementById(`btn_desempate_${i}`);
       const fila3 = document.getElementById(`fila_3_${i}`);
@@ -129,8 +121,19 @@
         (fila3 && fila3.dataset.activo === "true");
 
       if (btn) {
+        // Se muestra si hay empate real o si la fila ya fue forzada a abrirse
         btn.style.display =
           perteneceAlPodioEmpatado || filaActiva ? "block" : "none";
+
+        // Si la fila está visible (por empate o manual), el botón es para CANCELAR
+        if (perteneceAlPodioEmpatado || filaActiva) {
+          btn.innerHTML =
+            '<i class="fas fa-times-circle"></i> Quitar Desempate';
+          btn.classList.add("btn-peligro"); // Opcional: ponerlo en rojo para que denote "borrar"
+        } else {
+          btn.innerHTML = '<i class="fas fa-scale-balanced"></i> Desempate';
+          btn.classList.remove("btn-peligro");
+        }
       }
 
       if (fila3) {
@@ -151,6 +154,7 @@
     }
 
     function armarEscalon(rango, claseCss, titulo, etiquetaPosicion, detalle) {
+      // (Esta función se mantiene exactamente igual a la tuya)
       const esEmpate = rango.competidores.length > 1;
       const nombresHTML = rango.competidores
         .map((c) => c.nombre)
@@ -172,37 +176,56 @@
       `;
     }
 
-    const htmlOro = rangosPodio[0]
+    // 4. CORREGIMOS EL DESPLAZAMIENTO DE MEDALLAS
+    let puestoActual = 1;
+    let oro = null,
+      plata = null,
+      bronce = null;
+
+    for (const rango of rangos) {
+      if (puestoActual === 1) {
+        oro = rango;
+        puestoActual += rango.competidores.length; // Si empatan 2, el próximo puesto será el 3
+      } else if (puestoActual === 2) {
+        plata = rango;
+        puestoActual += rango.competidores.length;
+      } else if (puestoActual === 3) {
+        bronce = rango;
+        puestoActual += rango.competidores.length;
+      } else {
+        break; // Ya pasamos del 3er lugar
+      }
+    }
+
+    const htmlOro = oro
       ? armarEscalon(
-          rangosPodio[0],
+          oro,
           "oro",
           "1°",
           "1° puesto",
-          rangosPodio[0].competidores.length > 1
+          oro.competidores.length > 1
             ? "Desempate por 1° puesto"
             : "Puntaje base",
         )
       : "";
-
-    const htmlPlata = rangosPodio[1]
+    const htmlPlata = plata
       ? armarEscalon(
-          rangosPodio[1],
+          plata,
           "plata",
           "2°",
           "2° puesto",
-          rangosPodio[1].competidores.length > 1
+          plata.competidores.length > 1
             ? "Desempate por 2° puesto"
             : "Puntaje base",
         )
       : "";
-
-    const htmlBronce = rangosPodio[2]
+    const htmlBronce = bronce
       ? armarEscalon(
-          rangosPodio[2],
+          bronce,
           "bronce",
           "3°",
           "3° puesto",
-          rangosPodio[2].competidores.length > 1
+          bronce.competidores.length > 1
             ? "Desempate por 3° puesto"
             : "Puntaje base",
         )

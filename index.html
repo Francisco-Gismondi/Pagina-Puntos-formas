@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="./styles/components.css" />
     <link rel="stylesheet" href="./styles/podio.css" />
     <link rel="stylesheet" href="./styles/print.css" />
+    <link rel="stylesheet" href="./styles/manual.css" />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -24,7 +25,22 @@
   <body>
     <div class="page-shell">
       <header class="encabezado-principal">
-        <h1 class="titulo-pagina">Planilla de Puntuación - Formas</h1>
+        <div class="title-wrapper">
+          <a
+            class="titulo-link"
+            href="./index.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Abrir la página en una nueva pestaña"
+          >
+            <img
+              class="titulo-icono"
+              src="./images/icon.png"
+              alt="Logo de Taekwondo"
+            />
+            <h1 class="titulo-pagina">Planilla de Puntuación - Formas</h1>
+          </a>
+        </div>
       </header>
 
       <main class="contenido-principal">
@@ -186,7 +202,11 @@
         </section>
       </main>
 
-      <footer class="firma-creador ocultar-en-pdf">
+      <footer class="manual-footer ocultar-en-pdf">
+        <nav class="manual-footer-nav" aria-label="Navegación del sitio">
+          <a href="./index.html">Planilla</a>
+          <a href="./pages/manual.html">Manual de Usuario </a>
+        </nav>
         <p>Desarrollado por <strong>FranGis</strong></p>
       </footer>
     </div>
