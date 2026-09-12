@@ -187,7 +187,9 @@ th {
     flex-direction: column;
     gap: 10px;
     padding: 10px;
-    position: static;
+    position: sticky;
+    top: 10px; /* Necesita saber a qué distancia del techo anclarse */
+    z-index: 100;
   }
 
   .grupo-botones {

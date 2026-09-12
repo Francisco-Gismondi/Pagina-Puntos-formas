@@ -1,5 +1,17 @@
 (function () {
-  const STORAGE_KEY = "torneoTaekwondoCache";
+  // 1. Manejo del parámetro de URL para aislar las memorias de diferentes pestañas
+  const urlParams = new URLSearchParams(window.location.search);
+  let idMesa = urlParams.get("mesa");
+
+  // Si la URL no tiene parámetro, generamos uno único y redireccionamos silenciosamente
+  if (!idMesa) {
+    idMesa = Date.now().toString(36);
+    const nuevaUrl = window.location.pathname + "?mesa=" + idMesa;
+    window.location.replace(nuevaUrl);
+  }
+
+  // 2. Creamos la llave de caché única para esta sesión específica
+  const STORAGE_KEY = `torneoTaekwondoCaché_${idMesa}`;
 
   function serializarEstado({
     categoria,
@@ -70,26 +82,26 @@
     });
 
     try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
     } catch (error) {
-      console.warn("Cache bloqueada por el navegador.");
+      console.warn("Caché bloqueada por el navegador.", error);
     }
   }
 
   function cargarCache() {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
 
     try {
       return JSON.parse(raw);
     } catch (error) {
-      console.warn("No se pudo cargar el cache del torneo:", error);
+      console.warn("No se pudo cargar el caché del torneo:", error);
       return null;
     }
   }
 
   function limpiarCache() {
-    sessionStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_KEY);
   }
 
   window.TorneoStorage = {

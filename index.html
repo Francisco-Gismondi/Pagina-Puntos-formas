@@ -57,7 +57,13 @@
                 <i class="fas fa-trophy"></i> Calcular Podio
               </button>
             </div>
-
+            <button
+              class="btn-agregar"
+              style="background-color: #6c757d"
+              onclick="window.open(window.location.pathname, '_blank')"
+            >
+              <i class="fas fa-external-link-alt"></i> Abrir Nueva Llave
+            </button>
             <div class="grupo-botones">
               <button class="btn-excel" onclick="appTorneo.exportarExcel()">
                 <i class="fas fa-file-excel"></i> Exportar a Excel
@@ -215,5 +221,19 @@
     <script src="./scripts/storage.js"></script>
     <script src="./scripts/podio.js"></script>
     <script src="./scripts/app.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./sw.js")
+            .then((registration) => {
+              console.log("ServiceWorker registrado con éxito");
+            })
+            .catch((err) => {
+              console.log("Error al registrar el ServiceWorker: ", err);
+            });
+        });
+      }
+    </script>
   </body>
 </html>
