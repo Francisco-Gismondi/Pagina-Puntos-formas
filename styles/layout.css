@@ -196,7 +196,7 @@ th {
     gap: 10px;
     padding: 10px;
     position: sticky;
-    top: 10px; /* Necesita saber a qué distancia del techo anclarse */
+    top: 10px;
     z-index: 100;
   }
 

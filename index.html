@@ -195,7 +195,7 @@
                 style="display: none; margin-bottom: 1rem"
               >
                 <button
-                  class="btn-agregar"
+                  class="btn-agregar ocultar-en-pdf"
                   onclick="appTorneo.sortearFormaEmpate()"
                   style="background-color: #17a2b8"
                 >
@@ -210,12 +210,50 @@
 
       <footer class="manual-footer ocultar-en-pdf">
         <nav class="manual-footer-nav" aria-label="Navegación del sitio">
-          <a href="./index.html">Planilla</a>
           <a href="./pages/manual.html">Manual de Usuario </a>
         </nav>
         <p>Desarrollado por <strong>FranGis</strong></p>
       </footer>
     </div>
+
+    <script>
+      (() => {
+        const conservarParams = (path) => {
+          const url = new URL(path, window.location.href);
+          const params = new URLSearchParams(window.location.search);
+          for (const [key, value] of params.entries()) {
+            url.searchParams.set(key, value);
+          }
+
+          return `${url.pathname}${url.search}`;
+        };
+
+        const linkPlanilla = document.querySelector('a[href="./index.html"]');
+        if (linkPlanilla) {
+          linkPlanilla.setAttribute("href", conservarParams("./index.html"));
+        }
+
+        const linkManual = document.querySelector(
+          'a[href="./pages/manual.html"]',
+        );
+        if (linkManual) {
+          linkManual.setAttribute(
+            "href",
+            conservarParams("./pages/manual.html"),
+          );
+        }
+
+        const btnNuevaLlave = document.querySelector(
+          'button[onclick*="window.open(window.location.pathname"]',
+        );
+        if (btnNuevaLlave) {
+          btnNuevaLlave.setAttribute(
+            "onclick",
+            `window.open("${conservarParams(window.location.pathname)}", "_blank")`,
+          );
+        }
+      })();
+    </script>
 
     <script src="./scripts/tules.js"></script>
     <script src="./scripts/storage.js"></script>

@@ -91,7 +91,6 @@
 
     const gruposPodio = (() => {
       const gruposValidos = [];
-      // Solo nos importan los primeros 3 puestos reales para activar desempates
       let lugaresOcupados = 0;
       for (const rango of rangos) {
         if (lugaresOcupados >= 3) break;
@@ -109,7 +108,6 @@
       rango.competidores.forEach((comp) => idsEmpatePodio.add(comp.id));
     });
 
-    // 3. (El bucle de visibilidad de botones se mantiene igual aquí)
     for (let i = 1; i <= contadorCompetidores; i++) {
       const btn = document.getElementById(`btn_desempate_${i}`);
       const fila3 = document.getElementById(`fila_3_${i}`);
@@ -121,15 +119,13 @@
         (fila3 && fila3.dataset.activo === "true");
 
       if (btn) {
-        // Se muestra si hay empate real o si la fila ya fue forzada a abrirse
         btn.style.display =
           perteneceAlPodioEmpatado || filaActiva ? "block" : "none";
 
-        // Si la fila está visible (por empate o manual), el botón es para CANCELAR
         if (perteneceAlPodioEmpatado || filaActiva) {
           btn.innerHTML =
             '<i class="fas fa-times-circle"></i> Quitar Desempate';
-          btn.classList.add("btn-peligro"); // Opcional: ponerlo en rojo para que denote "borrar"
+          btn.classList.add("btn-peligro");
         } else {
           btn.innerHTML = '<i class="fas fa-scale-balanced"></i> Desempate';
           btn.classList.remove("btn-peligro");
@@ -154,7 +150,6 @@
     }
 
     function armarEscalon(rango, claseCss, titulo, etiquetaPosicion, detalle) {
-      // (Esta función se mantiene exactamente igual a la tuya)
       const esEmpate = rango.competidores.length > 1;
       const nombresHTML = rango.competidores
         .map((c) => c.nombre)
@@ -176,7 +171,6 @@
       `;
     }
 
-    // 4. CORREGIMOS EL DESPLAZAMIENTO DE MEDALLAS
     let puestoActual = 1;
     let oro = null,
       plata = null,
@@ -185,7 +179,7 @@
     for (const rango of rangos) {
       if (puestoActual === 1) {
         oro = rango;
-        puestoActual += rango.competidores.length; // Si empatan 2, el próximo puesto será el 3
+        puestoActual += rango.competidores.length;
       } else if (puestoActual === 2) {
         plata = rango;
         puestoActual += rango.competidores.length;
@@ -193,7 +187,7 @@
         bronce = rango;
         puestoActual += rango.competidores.length;
       } else {
-        break; // Ya pasamos del 3er lugar
+        break;
       }
     }
 

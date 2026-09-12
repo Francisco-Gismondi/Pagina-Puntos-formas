@@ -1,16 +1,13 @@
 (function () {
-  // 1. Manejo del parámetro de URL para aislar las memorias de diferentes pestañas
   const urlParams = new URLSearchParams(window.location.search);
   let idMesa = urlParams.get("mesa");
 
-  // Si la URL no tiene parámetro, generamos uno único y redireccionamos silenciosamente
   if (!idMesa) {
     idMesa = Date.now().toString(36);
     const nuevaUrl = window.location.pathname + "?mesa=" + idMesa;
     window.location.replace(nuevaUrl);
   }
 
-  // 2. Creamos la llave de caché única para esta sesión específica
   const STORAGE_KEY = `torneoTaekwondoCaché_${idMesa}`;
 
   function serializarEstado({

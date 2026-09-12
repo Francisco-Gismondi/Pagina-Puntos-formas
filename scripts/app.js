@@ -61,14 +61,11 @@
         const input = document.getElementById(`j${j}_${id}_${ronda}`);
         if (!input) continue;
 
-        // Limpiamos la clase visual por defecto
         input.classList.remove("juez-descartado");
 
-        // Solo tomamos en cuenta los casilleros donde realmente se escribió un número
         if (input.value.trim() !== "") {
           let valor = parseInt(input.value, 10);
 
-          // Control de límites
           if (valor > 100) {
             valor = 100;
             input.value = 100;
@@ -86,7 +83,6 @@
       let subtotal = 0;
 
       if (notasObj.length > 0) {
-        // Solo aplicamos la regla de descartar extremos si hay al menos 3 notas cargadas
         if (notasObj.length >= 3) {
           let indexMax = 0;
           for (let i = 1; i < notasObj.length; i++) {
@@ -111,7 +107,6 @@
           }
         }
 
-        // Sumamos exclusivamente las notas que sobrevivieron al filtro
         for (let i = 0; i < notasObj.length; i++) {
           if (!notasObj[i].elemento.classList.contains("juez-descartado")) {
             subtotal += notasObj[i].valor;
@@ -407,7 +402,6 @@
       const categoriaActual = getCategoriaActual() || "default";
       const competidoresActivos = [];
 
-      // 1. Recopilamos la base y el desempate (sin exigir que tengan el nombre escrito)
       for (let i = 1; i <= contadorCompetidores; i++) {
         const inputNombre = document.getElementById(`nombre_${i}`);
         if (!inputNombre) continue;
@@ -433,14 +427,12 @@
         return;
       }
 
-      // 2. Los ordenamos exactamente igual que en el podio (Base primero, Desempate después)
       competidoresActivos.sort((a, b) => {
         if (b.base !== a.base) return b.base - a.base;
         if (b.desempate !== a.desempate) return b.desempate - a.desempate;
         return 0;
       });
 
-      // 3. Agrupamos a los que están ESTRICTAMENTE empatados en todo
       const rangos = [];
       let rangoActual = {
         base: competidoresActivos[0].base,
@@ -466,15 +458,14 @@
       }
       rangos.push(rangoActual);
 
-      // 4. Buscamos el primer empate real que esté dentro del Top 3
       let lugaresOcupados = 0;
       let empatesEnPodio = [];
 
       for (const rango of rangos) {
-        if (lugaresOcupados >= 3) break; // Si ya pasamos el 3er lugar, dejamos de buscar
+        if (lugaresOcupados >= 3) break;
 
         if (rango.competidores.length > 1) {
-          empatesEnPodio.push(rango.competidores); // Guardamos todos los empates detectados
+          empatesEnPodio.push(rango.competidores);
         }
         lugaresOcupados += rango.competidores.length;
       }
@@ -486,10 +477,8 @@
         return;
       }
 
-      // 5. Invertimos la prioridad: Tomamos el ÚLTIMO empate detectado (el puesto menor)
       const empatadosParaSortear = empatesEnPodio[empatesEnPodio.length - 1];
 
-      // Aplicamos el sorteo solo a esos competidores
       empatadosParaSortear.forEach((comp) => {
         toggleDesempate(comp.id, true);
 
@@ -659,7 +648,6 @@
 
         if (estado.competidores.length > 0) {
           estado.competidores.forEach((comp) => agregarCompetidor(comp));
-          //calcularPodio(contadorCompetidores);
         } else {
           agregarCompetidor();
         }
