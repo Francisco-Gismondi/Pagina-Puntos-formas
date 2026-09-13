@@ -217,9 +217,14 @@
 
     <script>
       (() => {
-        const conservarParams = (path) => {
+        const conservarParams = (path, { conservarMesa = true } = {}) => {
           const url = new URL(path, window.location.href);
           const params = new URLSearchParams(window.location.search);
+
+          if (!conservarMesa) {
+            params.delete("mesa");
+          }
+
           for (const [key, value] of params.entries()) {
             url.searchParams.set(key, value);
           }
@@ -246,9 +251,16 @@
           'button[onclick*="window.open(window.location.pathname"]',
         );
         if (btnNuevaLlave) {
+          const mesaNueva = Date.now().toString(36);
+          const urlNuevaLlave = conservarParams(window.location.pathname, {
+            conservarMesa: false,
+          });
+          const urlConMesaNueva = new URL(urlNuevaLlave, window.location.href);
+          urlConMesaNueva.searchParams.set("mesa", mesaNueva);
+
           btnNuevaLlave.setAttribute(
             "onclick",
-            `window.open("${conservarParams(window.location.pathname)}", "_blank")`,
+            `window.open("${urlConMesaNueva.pathname}${urlConMesaNueva.search}", "_blank")`,
           );
         }
       })();
