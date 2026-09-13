@@ -57,6 +57,16 @@
   background-color: #e0a800;
 }
 
+.btn-nueva-llave {
+  background-color: #6c757d;
+  color: white;
+  border-radius: 999px;
+}
+
+.btn-nueva-llave:hover {
+  background-color: #5a6268;
+}
+
 .btn-pdf {
   background-color: #0056b3;
   color: white;

@@ -40,7 +40,7 @@
     return arr[Math.floor(Math.random() * arr.length)];
   }
 
-  function sortearFormas(categoria) {
+  function obtenerRangoFormas(categoria) {
     let rango1 = [];
     let rango2 = [];
 
@@ -93,11 +93,35 @@
         break;
     }
 
-    const forma1 = getRandomElement(rango1);
-    const forma2 = getRandomElement(rango2.filter((forma) => forma !== forma1));
+    return { rango1, rango2 };
+  }
+
+  function sortearFormas(categoria, formasExcluidas = []) {
+    const { rango1, rango2 } = obtenerRangoFormas(categoria);
+    const exclusiones = new Set((formasExcluidas || []).filter(Boolean));
+
+    const rango1Disponible = rango1.filter((forma) => !exclusiones.has(forma));
+    const forma1Base = rango1Disponible.length > 0 ? rango1Disponible : rango1;
+    const forma1 = getRandomElement(forma1Base);
+
+    exclusiones.add(forma1);
+
+    const rango2Disponible = rango2.filter(
+      (forma) => !exclusiones.has(forma) && forma !== forma1,
+    );
+    const forma2Base =
+      rango2Disponible.length > 0
+        ? rango2Disponible
+        : rango2.filter((forma) => forma !== forma1);
+    const forma2 = getRandomElement(forma2Base.length ? forma2Base : rango2);
 
     return { forma1, forma2 };
   }
 
-  window.TorneoTules = { TULES, generarOpcionesTules, sortearFormas };
+  window.TorneoTules = {
+    TULES,
+    generarOpcionesTules,
+    sortearFormas,
+    obtenerRangoFormas,
+  };
 })();

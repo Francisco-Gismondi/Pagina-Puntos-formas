@@ -1,5 +1,6 @@
 (function () {
-  const { TULES, generarOpcionesTules, sortearFormas } = window.TorneoTules;
+  const { TULES, generarOpcionesTules, sortearFormas, obtenerRangoFormas } =
+    window.TorneoTules;
   const { guardarCache, cargarCache, limpiarCache } = window.TorneoStorage;
   const { calcularPodio } = window.TorneoPodio;
 
@@ -485,11 +486,30 @@
         const select = document.getElementById(`forma_${comp.id}_3`);
         if (!select) return;
 
-        const formasSorteadas = sortearFormas(categoriaActual || "default");
+        const formasUsadas = [1, 2]
+          .map(
+            (ronda) =>
+              document.getElementById(`forma_${comp.id}_${ronda}`)?.value,
+          )
+          .filter(Boolean);
+
+        const formasSorteadas = sortearFormas(
+          categoriaActual || "default",
+          formasUsadas,
+        );
         const formaElegida =
           Math.random() < 0.5 ? formasSorteadas.forma1 : formasSorteadas.forma2;
 
-        select.value = formaElegida;
+        if (formasUsadas.includes(formaElegida)) {
+          const formasDisponibles = obtenerRangoFormas(
+            categoriaActual || "default",
+          ).rango2.filter((forma) => !formasUsadas.includes(forma));
+          select.value =
+            formasDisponibles.length > 0 ? formasDisponibles[0] : formaElegida;
+        } else {
+          select.value = formaElegida;
+        }
+
         actualizarTiempo(select, comp.id, 3);
       });
 

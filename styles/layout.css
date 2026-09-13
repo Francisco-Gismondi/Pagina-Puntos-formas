@@ -209,7 +209,7 @@ th {
     width: 100%;
     min-height: 44px;
     padding: 10px 14px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
 
   .btn-eliminar,
@@ -285,6 +285,19 @@ th {
     .grupo-botones button {
       width: auto;
       min-width: 0;
+      flex: 1;
+    }
+
+    .btn-podio {
+      flex: 1.5;
+    }
+
+    .btn-nueva-llave {
+      flex: 1.2;
+    }
+
+    .btn-excel,
+    .btn-pdf {
       flex: 1;
     }
 
