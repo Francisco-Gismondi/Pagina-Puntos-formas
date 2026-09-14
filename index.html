@@ -273,9 +273,10 @@
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
+          const swUrl = new URL("./scripts/sw.js", window.location.href);
           navigator.serviceWorker
-            .register("./sw.js")
-            .then((registration) => {
+            .register(swUrl, { scope: "./" })
+            .then(() => {
               console.log("ServiceWorker registrado con éxito");
             })
             .catch((err) => {
