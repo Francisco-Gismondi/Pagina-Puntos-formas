@@ -10,19 +10,7 @@
 
     function getCategoriaActual() {
       const select = document.getElementById("inputCategoria");
-      const inputCustom = document.getElementById(
-        "inputCategoriaPersonalizada",
-      );
-
       if (!select) return "";
-
-      if (select.value === "Personalizada") {
-        if (inputCustom && inputCustom.value.trim()) {
-          return inputCustom.value.trim();
-        }
-        return "";
-      }
-
       return select.value.trim();
     }
 
@@ -53,7 +41,7 @@
         `tiempo_${idCompetidor}_${ronda}`,
       );
       if (celdaTiempo) celdaTiempo.innerText = tiempo;
-      guardarCache(contadorCompetidores);
+      guardarCache(contadorCompetidores); // Se eliminó la llamada a TorneoCronometro aquí[cite: 8]
     }
 
     function procesarNotas(id, ronda) {
@@ -154,6 +142,17 @@
           <td id="celda_nombre_${id}" rowspan="2" style="vertical-align: middle;">
           <p class="numero-competidor ocultar-en-pdf">${id}</p>
             <input type="text" id="nombre_${id}" placeholder="Numero/Nombre competidor...">
+
+            <select id="cinturon_${id}" class="select-cinturon-individual" style="display: none; margin-top: 5px; width: 100%;">
+              <option value="">Cinturón individual...</option>
+              <option value="1 Gup">1 Gup</option>
+              <option value="1er Dan">1er Dan</option>
+              <option value="2do Dan">2do Dan</option>
+              <option value="3er Dan">3er Dan</option>
+              <option value="4to Dan">4to Dan</option>
+              <option value="5to Dan">5to Dan</option>
+            </select>
+            
             <button id="btn_desempate_${id}" class="btn-desempate ocultar-en-pdf" style="display: none;" data-id="${id}">
               <i class="fas fa-scale-balanced"></i> Desempate
             </button>
@@ -218,6 +217,10 @@
         );
       }
 
+      const esDispositivoMovil = window.matchMedia(
+        "(max-width: 1024px) and (pointer: coarse)",
+      ).matches;
+
       for (let ronda = 1; ronda <= 3; ronda++) {
         const select = document.getElementById(`forma_${id}_${ronda}`);
         if (select) {
@@ -227,6 +230,33 @@
               id,
               Number(event.target.dataset.ronda),
             );
+          });
+        }
+
+        const celdaTiempo = document.getElementById(`tiempo_${id}_${ronda}`);
+        if (celdaTiempo && !esDispositivoMovil) {
+          // Estilos para que parezca un botón o enlace tocable
+          celdaTiempo.style.cursor = "pointer";
+          celdaTiempo.style.color = "#0056b3";
+          celdaTiempo.style.fontWeight = "bold";
+          celdaTiempo.style.textDecoration = "underline";
+          celdaTiempo.title = "Tocar para enviar forma y tiempo a la TV";
+
+          // Evento que envía la forma al cronómetro al tocar
+          celdaTiempo.addEventListener("click", () => {
+            const formaSeleccionada = select.value;
+            if (
+              formaSeleccionada &&
+              formaSeleccionada !== "" &&
+              window.TorneoCronometro
+            ) {
+              window.TorneoCronometro.reiniciar(formaSeleccionada);
+
+              // Opcional: Feedback visual temporal
+              const colorOriginal = celdaTiempo.style.color;
+              celdaTiempo.style.color = "#28a745"; // Verde de éxito
+              setTimeout(() => (celdaTiempo.style.color = colorOriginal), 500);
+            }
           });
         }
 
@@ -242,6 +272,10 @@
 
       if (datos) {
         nombreInput.value = datos.nombre || "";
+        const cinturonInput = document.getElementById(`cinturon_${id}`);
+        if (cinturonInput && datos.cinturon) {
+          cinturonInput.value = datos.cinturon;
+        }
         for (let ronda = 1; ronda <= 3; ronda++) {
           if (datos[`f${ronda}`]) {
             const select = document.getElementById(`forma_${id}_${ronda}`);
@@ -328,11 +362,12 @@
     function verificarBotonSorteo() {
       const select = document.getElementById("inputCategoria");
       const contenedorSorteo = document.getElementById("contenedor_sorteo");
-
       actualizarEstadoCategoriaPersonalizada();
 
       if (select && contenedorSorteo) {
         const categoriaSeleccionada = select.value;
+        const esPersonalizada = categoriaSeleccionada === "Personalizada";
+
         const categoriaConSorteo = [
           "1 Gup",
           "1er Dan",
@@ -340,6 +375,7 @@
           "3er Dan",
           "4to Dan",
           "5to Dan",
+          "Personalizada",
         ];
 
         contenedorSorteo.style.display = categoriaConSorteo.includes(
@@ -347,6 +383,13 @@
         )
           ? "flex"
           : "none";
+
+        for (let i = 1; i <= contadorCompetidores; i++) {
+          const selectIndividual = document.getElementById(`cinturon_${i}`);
+          if (selectIndividual) {
+            selectIndividual.style.display = esPersonalizada ? "block" : "none";
+          }
+        }
       }
       guardarCache(contadorCompetidores);
     }
@@ -359,14 +402,10 @@
         return;
       }
 
+      const esPersonalizada = categoriaElement.value === "Personalizada";
       const categoriaSeleccionada = getCategoriaActual();
 
-      if (categoriaElement.value === "Personalizada") {
-        alert("La categoría personalizada no tiene sorteo automático.");
-        return;
-      }
-
-      if (!categoriaSeleccionada) {
+      if (!categoriaSeleccionada && !esPersonalizada) {
         alert("Debes seleccionar una categoría válida.");
         return;
       }
@@ -384,7 +423,15 @@
         const selectF2 = document.getElementById(`forma_${i}_2`);
 
         if (selectF1 && selectF2) {
-          const formasSorteadas = sortearFormas(categoriaSeleccionada);
+          let catCompetidor = categoriaSeleccionada;
+
+          if (esPersonalizada) {
+            const cinturonInd = document.getElementById(`cinturon_${i}`);
+            if (!cinturonInd || !cinturonInd.value) continue;
+            catCompetidor = cinturonInd.value;
+          }
+
+          const formasSorteadas = sortearFormas(catCompetidor);
 
           selectF1.value = formasSorteadas.forma1;
           selectF2.value = formasSorteadas.forma2;
@@ -530,6 +577,23 @@
         limpiarCache();
         location.reload();
       }
+    }
+
+    function actualizarTiempo(selectElem, idCompetidor, ronda) {
+      const forma = selectElem.value;
+      const tiempo = TULES[forma] ? TULES[forma] : "-";
+      const celdaTiempo = document.getElementById(
+        `tiempo_${idCompetidor}_${ronda}`,
+      );
+
+      if (celdaTiempo) celdaTiempo.innerText = tiempo;
+
+      // NUEVO: Reiniciar cronómetro y pasarlo a cero al cambiar la forma
+      if (window.TorneoCronometro) {
+        window.TorneoCronometro.reiniciar(forma);
+      }
+
+      guardarCache(contadorCompetidores);
     }
 
     function exportarPDF() {
@@ -716,6 +780,27 @@
       document
         .getElementById("inputEdad")
         ?.addEventListener("change", verificarBotonSorteo);
+      document.addEventListener(
+        "wheel",
+        function (event) {
+          if (document.activeElement.type === "number") {
+            event.preventDefault();
+          }
+        },
+        { passive: false },
+      );
+      document
+        .getElementById("btnCronoPlay")
+        ?.addEventListener("click", window.TorneoCronometro.iniciar);
+      document
+        .getElementById("btnCronoPausa")
+        ?.addEventListener("click", window.TorneoCronometro.pausar);
+      document
+        .getElementById("btnCronoReset")
+        ?.addEventListener("click", () => window.TorneoCronometro.reiniciar());
+      document
+        .getElementById("btnAbrirTV")
+        ?.addEventListener("click", window.TorneoCronometro.abrirTV);
     }
 
     inicializarControles();

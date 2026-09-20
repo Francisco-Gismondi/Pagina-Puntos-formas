@@ -31,6 +31,9 @@
       estado.competidores.push({
         id,
         nombre: nombreInput.value,
+        cinturon: document.getElementById(`cinturon_${id}`)
+          ? document.getElementById(`cinturon_${id}`).value
+          : "",
         f1: document.getElementById(`forma_${id}_1`)
           ? document.getElementById(`forma_${id}_1`).value
           : "",

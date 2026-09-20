@@ -1,4 +1,4 @@
-const CACHE_NAME = "torneo-tkd-v4";
+const CACHE_NAME = "torneo-tkd-v6";
 
 const urlsToCache = [
   "./",
@@ -10,12 +10,15 @@ const urlsToCache = [
   "./styles/podio.css",
   "./styles/print.css",
   "./styles/manual.css",
+  "./styles/marcador.css",
   "./scripts/tules.js",
   "./scripts/mesa.js",
   "./scripts/storage.js",
   "./scripts/podio.js",
   "./scripts/app.js",
   "./images/icon.png",
+  "./pages/marcador.html",
+  "./scripts/cronometro.js",
   "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2",

@@ -42,6 +42,27 @@
   gap: 10px;
 }
 
+.grupo-botones-principales button {
+  align-items: center;
+  min-width: 150px;
+}
+
+.grupo-botones-cuadrado {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  width: min(100%, 360px);
+}
+
+.grupo-botones-cuadrado button {
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 7px 9px;
+  font-size: 0.78rem;
+  margin: 0;
+}
+
 .encabezado-torneo {
   display: flex;
   gap: 20px;
@@ -205,6 +226,30 @@ th {
     width: 100%;
   }
 
+  .grupo-botones-principales {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .grupo-botones-principales button {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+
+  .grupo-botones-cuadrado {
+    width: 100%;
+  }
+
+  .grupo-botones-cuadrado button {
+    min-height: 42px;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+  }
+
   .grupo-botones button {
     width: 100%;
     min-height: 44px;
@@ -328,24 +373,38 @@ th {
     width: 100%;
   }
 
-  .controles-superiores .grupo-botones .btn-agregar {
+  .controles-superiores .grupo-botones-principales .btn-agregar {
     position: fixed !important;
     bottom: 20px !important;
     right: 20px !important;
-    width: auto !important;
     min-width: unset !important;
     max-width: none !important;
     height: 50px !important;
+    width: auto !important;
     border-radius: 30px !important;
     z-index: 1000 !important;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
     font-size: 15px !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
     padding: 0 20px !important;
     margin: 0 !important;
-    gap: 8px !important;
+    gap: 6px !important;
+  }
+
+  .controles-superiores .grupo-botones-principales .btn-podio {
+    position: fixed !important;
+    bottom: 80px !important;
+    right: 20px !important;
+    min-width: unset !important;
+    max-width: none !important;
+    height: 50px !important;
+    width: auto !important;
+    border-radius: 30px !important;
+    z-index: 1000 !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+    font-size: 15px !important;
+    padding: 0 20px !important;
+    margin: 0 !important;
+    gap: 6px !important;
   }
 
   #contenedor_sorteo .btn-agregar {
@@ -361,8 +420,8 @@ th {
     display: inline-flex !important;
   }
 
-  .controles-superiores .grupo-botones .btn-agregar i.fas {
-    font-size: 18px !important;
-    margin: 0 !important;
+  .controles-superiores .grupo-botones-principales .btn-agregar i.fas {
+    font-size: 0.95em !important;
+    margin: 0 6px 0 0 !important;
   }
 }
