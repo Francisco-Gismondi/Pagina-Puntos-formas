@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="./styles/print.css" />
     <link rel="stylesheet" href="./styles/manual.css" />
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link
       rel="stylesheet"
@@ -44,36 +43,27 @@
       </header>
 
       <main class="contenido-principal">
-        <section class="contenedor" aria-label="Planilla de toreno">
+        <section class="contenedor" aria-label="Planilla de torneo">
           <div class="controles-superiores ocultar-en-pdf">
             <div class="grupo-botones">
-              <button
-                class="btn-agregar"
-                onclick="appTorneo.agregarCompetidor()"
-              >
+              <button id="btnAgregarCompetidor" class="btn-agregar">
                 <i class="fas fa-user-plus"></i> Agregar Competidor
               </button>
-              <button class="btn-podio" onclick="appTorneo.calcularPodio()">
+              <button id="btnCalcularPodio" class="btn-podio">
                 <i class="fas fa-trophy"></i> Calcular Podio
               </button>
             </div>
             <div class="grupo-botones">
-              <button
-                class="btn-nueva-llave"
-                onclick="window.open(window.location.pathname, '_blank')"
-              >
+              <button id="btnNuevaLlave" class="btn-nueva-llave">
                 <i class="fas fa-external-link-alt"></i> Abrir Nueva Llave
               </button>
-              <button class="btn-excel" onclick="appTorneo.exportarExcel()">
+              <button id="btnExportarExcel" class="btn-excel">
                 <i class="fas fa-file-excel"></i> Exportar a Excel
               </button>
-              <button class="btn-pdf" onclick="appTorneo.exportarPDF()">
+              <button id="btnExportarPDF" class="btn-pdf">
                 <i class="fas fa-file-pdf"></i> Exportar a PDF
               </button>
-              <button
-                class="btn-reiniciar"
-                onclick="appTorneo.reiniciarPlanilla()"
-              >
+              <button id="btnReiniciarPlanilla" class="btn-reiniciar">
                 <i class="fas fa-sync-alt"></i> Reiniciar Plantilla
               </button>
             </div>
@@ -88,10 +78,7 @@
             <div class="encabezado-torneo">
               <div class="campo">
                 <label for="inputCategoria">Categoría / Cinturón:</label>
-                <select
-                  id="inputCategoria"
-                  onchange="appTorneo.verificarBotonSorteo()"
-                >
+                <select id="inputCategoria">
                   <option value="">Seleccione la categoría...</option>
                   <option value="1 Gup">1 Gup</option>
                   <option value="1er Dan">1er Dan</option>
@@ -115,25 +102,18 @@
                   type="text"
                   id="inputCategoriaPersonalizada"
                   placeholder="Ej: 10-9 gup, 8-4 Gup, 3-1 Gup..."
-                  oninput="appTorneo.verificarBotonSorteo()"
                 />
               </div>
 
               <div class="campo">
                 <label for="inputEdad">Edades:</label>
-                <select
-                  id="inputEdad"
-                  onchange="appTorneo.verificarBotonSorteo()"
-                >
+                <select id="inputEdad">
                   <option value="">Seleccione la edad...</option>
                   <option value="Cadete (12 a 13 años)">
                     Cadete (12 a 13 años)
                   </option>
-                  <option value="Junior (14 a 15 años)">
-                    Junior (14 a 15 años)
-                  </option>
-                  <option value="Juvenil (16 a 17 años)">
-                    Juvenil (16 a 17 años)
+                  <option value="Juvenil (14 a 17 años)">
+                    Juvenil (14 a 17 años)
                   </option>
                   <option value="Adultos (18 a 34 años)">
                     Adultos (18 a 34 años)
@@ -153,9 +133,9 @@
                 style="justify-content: flex-end; display: none"
               >
                 <button
+                  id="btnSortearFormas"
                   class="btn-agregar"
                   style="background-color: #17a2b8"
-                  onclick="appTorneo.sortearYAsignar()"
                 >
                   <i class="fas fa-dice"></i> Sortear Formas
                 </button>
@@ -194,8 +174,8 @@
                 style="display: none; margin-bottom: 1rem"
               >
                 <button
+                  id="btnSortearDesempate"
                   class="btn-agregar ocultar-en-pdf"
-                  onclick="appTorneo.sortearFormaEmpate()"
                   style="background-color: #17a2b8"
                 >
                   <i class="fas fa-dice"></i> Sortear Forma de Empate
@@ -215,74 +195,15 @@
       </footer>
     </div>
 
-    <script>
-      (() => {
-        const conservarParams = (path, { conservarMesa = true } = {}) => {
-          const url = new URL(path, window.location.href);
-          const params = new URLSearchParams(window.location.search);
-
-          if (!conservarMesa) {
-            params.delete("mesa");
-          }
-
-          for (const [key, value] of params.entries()) {
-            url.searchParams.set(key, value);
-          }
-
-          return `${url.pathname}${url.search}`;
-        };
-
-        const linkPlanilla = document.querySelector('a[href="./index.html"]');
-        if (linkPlanilla) {
-          linkPlanilla.setAttribute("href", conservarParams("./index.html"));
-        }
-
-        const linkManual = document.querySelector(
-          'a[href="./pages/manual.html"]',
-        );
-        if (linkManual) {
-          linkManual.setAttribute(
-            "href",
-            conservarParams("./pages/manual.html"),
-          );
-        }
-
-        const btnNuevaLlave = document.querySelector(
-          'button[onclick*="window.open(window.location.pathname"]',
-        );
-        if (btnNuevaLlave) {
-          const mesaNueva = Date.now().toString(36);
-          const urlNuevaLlave = conservarParams(window.location.pathname, {
-            conservarMesa: false,
-          });
-          const urlConMesaNueva = new URL(urlNuevaLlave, window.location.href);
-          urlConMesaNueva.searchParams.set("mesa", mesaNueva);
-
-          btnNuevaLlave.setAttribute(
-            "onclick",
-            `window.open("${urlConMesaNueva.pathname}${urlConMesaNueva.search}", "_blank")`,
-          );
-        }
-      })();
-    </script>
-
+    <!-- Carga de scripts principales -->
     <script src="./scripts/tules.js"></script>
+    <script src="./scripts/mesa.js"></script>
     <script src="./scripts/storage.js"></script>
     <script src="./scripts/podio.js"></script>
     <script src="./scripts/app.js"></script>
-    <script>
-      if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("./sw.js")
-            .then(() => {
-              console.log("ServiceWorker registrado con éxito");
-            })
-            .catch((err) => {
-              console.log("Error al registrar el ServiceWorker: ", err);
-            });
-        });
-      }
-    </script>
+    <script
+      src="./scripts/inicializacion.js"
+      data-service-worker="./sw.js"
+    ></script>
   </body>
 </html>

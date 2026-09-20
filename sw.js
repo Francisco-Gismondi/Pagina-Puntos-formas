@@ -1,4 +1,4 @@
-const CACHE_NAME = "torneo-tkd-v3";
+const CACHE_NAME = "torneo-tkd-v4";
 
 const urlsToCache = [
   "./",
@@ -11,11 +11,11 @@ const urlsToCache = [
   "./styles/print.css",
   "./styles/manual.css",
   "./scripts/tules.js",
+  "./scripts/mesa.js",
   "./scripts/storage.js",
   "./scripts/podio.js",
   "./scripts/app.js",
   "./images/icon.png",
-  "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js",
   "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2",
@@ -36,7 +36,6 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
   event.respondWith(
-    // El ignoreSearch: true es LA clave para que las URLs con ?mesa= funcionen offline
     caches
       .match(event.request, { ignoreSearch: true })
       .then((cachedResponse) => {

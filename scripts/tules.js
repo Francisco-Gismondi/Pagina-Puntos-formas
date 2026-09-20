@@ -36,10 +36,6 @@
     return opciones;
   }
 
-  function getRandomElement(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-  }
-
   function obtenerRangoFormas(categoria) {
     let rango1 = [];
     let rango2 = [];
@@ -96,32 +92,47 @@
     return { rango1, rango2 };
   }
 
-  function sortearFormas(categoria, formasExcluidas = []) {
+  const bolsasRango1 = {};
+  const bolsasRango2 = {};
+
+  function mezclar(arreglo) {
+    let mezclado = [...arreglo];
+    for (let i = mezclado.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [mezclado[i], mezclado[j]] = [mezclado[j], mezclado[i]];
+    }
+    return mezclado;
+  }
+
+  function sortearFormas(categoria) {
     const { rango1, rango2 } = obtenerRangoFormas(categoria);
-    const exclusiones = new Set((formasExcluidas || []).filter(Boolean));
 
-    const rango1Disponible = rango1.filter((forma) => !exclusiones.has(forma));
-    const forma1Base = rango1Disponible.length > 0 ? rango1Disponible : rango1;
-    const forma1 = getRandomElement(forma1Base);
+    if (!rango1.length || !rango2.length) {
+      return { forma1: "-", forma2: "-" };
+    }
 
-    exclusiones.add(forma1);
+    if (!bolsasRango1[categoria] || bolsasRango1[categoria].length === 0) {
+      bolsasRango1[categoria] = mezclar(rango1);
+    }
+    if (!bolsasRango2[categoria] || bolsasRango2[categoria].length === 0) {
+      bolsasRango2[categoria] = mezclar(rango2);
+    }
 
-    const rango2Disponible = rango2.filter(
-      (forma) => !exclusiones.has(forma) && forma !== forma1,
-    );
-    const forma2Base =
-      rango2Disponible.length > 0
-        ? rango2Disponible
-        : rango2.filter((forma) => forma !== forma1);
-    const forma2 = getRandomElement(forma2Base.length ? forma2Base : rango2);
+    let f1 = bolsasRango1[categoria].pop();
+    let f2 = bolsasRango2[categoria].pop();
 
-    return { forma1, forma2 };
+    if (f1 === f2 && rango2.length > 1) {
+      bolsasRango2[categoria].unshift(f2);
+      f2 = bolsasRango2[categoria].pop();
+    }
+
+    return { forma1: f1, forma2: f2 };
   }
 
   window.TorneoTules = {
     TULES,
     generarOpcionesTules,
-    sortearFormas,
     obtenerRangoFormas,
+    sortearFormas,
   };
 })();
