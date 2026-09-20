@@ -161,6 +161,16 @@ body.manual-page-body {
   color: white;
 }
 
+.bg-excel {
+  background: #198754;
+  color: white;
+}
+
+.bg-pdf {
+  background: #6f42c1;
+  color: white;
+}
+
 .bg-accent {
   background: var(--manual-accent);
   color: white;
