@@ -140,10 +140,12 @@
     }
 
     function agregarCompetidor(datos = null) {
-      contadorCompetidores += 1;
-      const id = datos ? datos.id : contadorCompetidores;
-      if (datos && datos.id > contadorCompetidores)
-        contadorCompetidores = datos.id;
+      const idGuardado = Number(datos?.id);
+      const id =
+        Number.isInteger(idGuardado) && idGuardado > 0
+          ? idGuardado
+          : contadorCompetidores + 1;
+      contadorCompetidores = Math.max(contadorCompetidores, id);
 
       const tbody = document.getElementById("listaPuntajes");
 
