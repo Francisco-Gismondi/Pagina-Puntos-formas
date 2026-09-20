@@ -41,6 +41,7 @@
   background-color: #28a745;
   color: white;
   border-radius: 999px;
+  align-self: center;
 }
 
 .btn-agregar:hover {
@@ -51,6 +52,7 @@
   background-color: #ffc107;
   color: #212529;
   border-radius: 999px;
+  align-self: center;
 }
 
 .btn-podio:hover {
@@ -112,6 +114,93 @@
 .btn-desempate:hover {
   background-color: #fd7e14;
   color: white;
+}
+
+.cronometro-widget {
+  display: grid;
+  grid-template-columns: repeat(4, 48px);
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 5px 8px;
+  margin-right: 10px;
+  background: #343a40;
+  color: white;
+  border-radius: 5px;
+}
+
+.display-cronometro {
+  grid-row: 1;
+  grid-column: 1 / span 4;
+  width: 100%;
+  min-width: 9ch;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.btn-cronometro {
+  flex: 0 0 34px;
+  min-width: 34px;
+  min-height: 34px;
+  padding: 5px;
+  border: 0;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-cronometro i.fas {
+  margin-right: 0;
+}
+
+.btn-cronometro-play {
+  background: #28a745;
+}
+
+.btn-cronometro-pausa {
+  background: #ffc107;
+  color: #212529;
+}
+
+.btn-cronometro-reset {
+  background: #dc3545;
+}
+
+.btn-cronometro-tv {
+  flex-basis: auto;
+  min-width: 48px;
+  background: #17a2b8;
+}
+
+@media (max-width: 1024px) {
+  .cronometro-widget {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    margin-right: 0;
+  }
+
+  .btn-cronometro-tv {
+    display: none;
+  }
+
+  .display-cronometro {
+    font-size: 1rem;
+  }
+
+  #tablaCompetidores td[id^="tiempo_"] {
+    pointer-events: none;
+    cursor: default !important;
+    color: inherit !important;
+    text-decoration: none !important;
+  }
 }
 
 #tablaCompetidores td button.btn-desempate,

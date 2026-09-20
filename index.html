@@ -45,7 +45,7 @@
       <main class="contenido-principal">
         <section class="contenedor" aria-label="Planilla de torneo">
           <div class="controles-superiores ocultar-en-pdf">
-            <div class="grupo-botones">
+            <div class="grupo-botones grupo-botones-principales">
               <button id="btnAgregarCompetidor" class="btn-agregar">
                 <i class="fas fa-user-plus"></i> Agregar Competidor
               </button>
@@ -53,7 +53,43 @@
                 <i class="fas fa-trophy"></i> Calcular Podio
               </button>
             </div>
-            <div class="grupo-botones">
+            <div
+              class="cronometro-widget"
+              aria-label="Controles del cronómetro"
+            >
+              <span id="displayCronometroPC" class="display-cronometro"
+                >00:00:000</span
+              >
+              <button
+                id="btnCronoPlay"
+                class="btn-cronometro btn-cronometro-play"
+                title="Iniciar"
+              >
+                <i class="fas fa-play"></i>
+              </button>
+              <button
+                id="btnCronoPausa"
+                class="btn-cronometro btn-cronometro-pausa"
+                title="Pausar"
+              >
+                <i class="fas fa-pause"></i>
+              </button>
+              <button
+                id="btnCronoReset"
+                class="btn-cronometro btn-cronometro-reset"
+                title="Reiniciar"
+              >
+                <i class="fas fa-stop"></i>
+              </button>
+              <button
+                id="btnAbrirTV"
+                class="btn-cronometro btn-cronometro-tv"
+                title="Abrir Monitor"
+              >
+                <i class="fas fa-tv"></i>
+              </button>
+            </div>
+            <div class="grupo-botones-cuadrado">
               <button id="btnNuevaLlave" class="btn-nueva-llave">
                 <i class="fas fa-external-link-alt"></i> Abrir Nueva Llave
               </button>
@@ -185,10 +221,11 @@
     <script src="./scripts/mesa.js"></script>
     <script src="./scripts/storage.js"></script>
     <script src="./scripts/podio.js"></script>
-    <script src="./scripts/app.js"></script>
+    <script src="./scripts/cronometro.js"></script>
     <script
       src="./scripts/inicializacion.js"
       data-service-worker="./sw.js"
     ></script>
+    <script src="./scripts/app.js"></script>
   </body>
 </html>

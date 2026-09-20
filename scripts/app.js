@@ -41,7 +41,7 @@
         `tiempo_${idCompetidor}_${ronda}`,
       );
       if (celdaTiempo) celdaTiempo.innerText = tiempo;
-      guardarCache(contadorCompetidores);
+      guardarCache(contadorCompetidores); // Se eliminó la llamada a TorneoCronometro aquí[cite: 8]
     }
 
     function procesarNotas(id, ronda) {
@@ -217,6 +217,10 @@
         );
       }
 
+      const esDispositivoMovil = window.matchMedia(
+        "(max-width: 1024px) and (pointer: coarse)",
+      ).matches;
+
       for (let ronda = 1; ronda <= 3; ronda++) {
         const select = document.getElementById(`forma_${id}_${ronda}`);
         if (select) {
@@ -226,6 +230,33 @@
               id,
               Number(event.target.dataset.ronda),
             );
+          });
+        }
+
+        const celdaTiempo = document.getElementById(`tiempo_${id}_${ronda}`);
+        if (celdaTiempo && !esDispositivoMovil) {
+          // Estilos para que parezca un botón o enlace tocable
+          celdaTiempo.style.cursor = "pointer";
+          celdaTiempo.style.color = "#0056b3";
+          celdaTiempo.style.fontWeight = "bold";
+          celdaTiempo.style.textDecoration = "underline";
+          celdaTiempo.title = "Tocar para enviar forma y tiempo a la TV";
+
+          // Evento que envía la forma al cronómetro al tocar
+          celdaTiempo.addEventListener("click", () => {
+            const formaSeleccionada = select.value;
+            if (
+              formaSeleccionada &&
+              formaSeleccionada !== "" &&
+              window.TorneoCronometro
+            ) {
+              window.TorneoCronometro.reiniciar(formaSeleccionada);
+
+              // Opcional: Feedback visual temporal
+              const colorOriginal = celdaTiempo.style.color;
+              celdaTiempo.style.color = "#28a745"; // Verde de éxito
+              setTimeout(() => (celdaTiempo.style.color = colorOriginal), 500);
+            }
           });
         }
 
@@ -548,6 +579,23 @@
       }
     }
 
+    function actualizarTiempo(selectElem, idCompetidor, ronda) {
+      const forma = selectElem.value;
+      const tiempo = TULES[forma] ? TULES[forma] : "-";
+      const celdaTiempo = document.getElementById(
+        `tiempo_${idCompetidor}_${ronda}`,
+      );
+
+      if (celdaTiempo) celdaTiempo.innerText = tiempo;
+
+      // NUEVO: Reiniciar cronómetro y pasarlo a cero al cambiar la forma
+      if (window.TorneoCronometro) {
+        window.TorneoCronometro.reiniciar(forma);
+      }
+
+      guardarCache(contadorCompetidores);
+    }
+
     function exportarPDF() {
       const categoriaActual = getCategoriaActual() || "SinCategoria";
       const cat = categoriaActual.trim().replace(/[\\/\\:*?"<>|]/g, "_");
@@ -741,6 +789,18 @@
         },
         { passive: false },
       );
+      document
+        .getElementById("btnCronoPlay")
+        ?.addEventListener("click", window.TorneoCronometro.iniciar);
+      document
+        .getElementById("btnCronoPausa")
+        ?.addEventListener("click", window.TorneoCronometro.pausar);
+      document
+        .getElementById("btnCronoReset")
+        ?.addEventListener("click", () => window.TorneoCronometro.reiniciar());
+      document
+        .getElementById("btnAbrirTV")
+        ?.addEventListener("click", window.TorneoCronometro.abrirTV);
     }
 
     inicializarControles();

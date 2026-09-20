@@ -1,0 +1,35 @@
+body {
+  background-color: #000;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+}
+
+#nombreFormaTV {
+  max-width: 94vw;
+  font-size: clamp(1.5rem, 8vw, 5rem);
+  color: #ffc107;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+#displayTV {
+  max-width: 96vw;
+  font-size: clamp(3rem, 15vw, 10rem);
+  font-weight: bold;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tiempo-agotado {
+  color: #dc3545;
+}

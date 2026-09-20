@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marcador TV</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../styles/marcador.css" />
+  </head>
+  <body>
+    <div id="nombreFormaTV">-</div>
+    <div id="displayTV">00:00:000</div>
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const idMesa = urlParams.get("mesa");
+
+      let enMarcha = false;
+      let tiempoInicio = 0;
+      let tiempoAcumulado = 0;
+      let limiteMs = 0;
+      let intervaloTV = null;
+
+      function formatearTiempo(milisegundosTotales) {
+        const min = Math.floor(milisegundosTotales / 60000)
+          .toString()
+          .padStart(2, "0");
+        const seg = Math.floor((milisegundosTotales % 60000) / 1000)
+          .toString()
+          .padStart(2, "0");
+        const ms = (milisegundosTotales % 1000).toString().padStart(3, "0");
+        return `${min}:${seg}:${ms}`;
+      }
+
+      function actualizarReloj() {
+        if (!enMarcha) return;
+        const transcurrido = tiempoAcumulado + (Date.now() - tiempoInicio);
+        const display = document.getElementById("displayTV");
+
+        if (display) {
+          display.innerText = formatearTiempo(transcurrido);
+          if (limiteMs > 0 && transcurrido >= limiteMs) {
+            display.classList.add("tiempo-agotado");
+          } else {
+            display.classList.remove("tiempo-agotado");
+          }
+        }
+      }
+
+      window.addEventListener("storage", function (event) {
+        if (event.key === `comando_cronometro_${idMesa}`) {
+          const comando = JSON.parse(event.newValue);
+          const display = document.getElementById("displayTV");
+          const formaDisplay = document.getElementById("nombreFormaTV");
+
+          limiteMs = comando.limite || 0;
+
+          if (comando.accion === "INICIAR") {
+            tiempoInicio = Date.now();
+            tiempoAcumulado = comando.tiempoAcumulado || 0;
+            enMarcha = true;
+            if (intervaloTV) clearInterval(intervaloTV);
+            intervaloTV = setInterval(actualizarReloj, 47);
+          } else if (comando.accion === "PAUSAR") {
+            enMarcha = false;
+            if (intervaloTV) clearInterval(intervaloTV);
+            tiempoAcumulado = comando.tiempoAcumulado || 0;
+            if (display) display.innerText = formatearTiempo(tiempoAcumulado);
+          } else if (comando.accion === "REINICIAR") {
+            enMarcha = false;
+            if (intervaloTV) clearInterval(intervaloTV);
+            tiempoAcumulado = 0;
+            if (display) {
+              display.innerText = "00:00:000";
+              display.classList.remove("tiempo-agotado");
+            }
+            if (formaDisplay) {
+              formaDisplay.innerText = comando.nombreForma || "-";
+            }
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
