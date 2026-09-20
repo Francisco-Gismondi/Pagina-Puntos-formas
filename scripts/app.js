@@ -3,6 +3,7 @@
     window.TorneoTules;
   const { guardarCache, cargarCache, limpiarCache } = window.TorneoStorage;
   const { calcularPodio } = window.TorneoPodio;
+  const { abrirNuevaLlave } = window.TorneoMesa;
 
   const appTorneo = (function () {
     let contadorCompetidores = 0;
@@ -678,6 +679,44 @@
       actualizarBotonesEliminar();
       verificarBotonSorteo();
     }
+
+    function inicializarControles() {
+      document
+        .getElementById("btnAgregarCompetidor")
+        ?.addEventListener("click", agregarCompetidor);
+      document
+        .getElementById("btnCalcularPodio")
+        ?.addEventListener("click", () => calcularPodio(contadorCompetidores));
+      document
+        .getElementById("btnNuevaLlave")
+        ?.addEventListener("click", abrirNuevaLlave);
+      document
+        .getElementById("btnExportarExcel")
+        ?.addEventListener("click", exportarExcel);
+      document
+        .getElementById("btnExportarPDF")
+        ?.addEventListener("click", exportarPDF);
+      document
+        .getElementById("btnReiniciarPlanilla")
+        ?.addEventListener("click", reiniciarPlanilla);
+      document
+        .getElementById("btnSortearFormas")
+        ?.addEventListener("click", sortearYAsignar);
+      document
+        .getElementById("btnSortearDesempate")
+        ?.addEventListener("click", sortearFormaEmpate);
+      document
+        .getElementById("inputCategoria")
+        ?.addEventListener("change", verificarBotonSorteo);
+      document
+        .getElementById("inputCategoriaPersonalizada")
+        ?.addEventListener("input", verificarBotonSorteo);
+      document
+        .getElementById("inputEdad")
+        ?.addEventListener("change", verificarBotonSorteo);
+    }
+
+    inicializarControles();
 
     return {
       agregarCompetidor,

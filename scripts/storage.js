@@ -102,7 +102,6 @@
   }
 
   window.TorneoStorage = {
-    serializarEstado,
     guardarCache,
     cargarCache,
     limpiarCache,
