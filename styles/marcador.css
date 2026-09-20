@@ -1,7 +1,8 @@
 body {
   background-color: #000;
   color: #fff;
-  font-family: Arial, sans-serif;
+  font-weight: bold;
+  font-family: "Segoe UI", Arial, sans-serif;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -13,8 +14,9 @@ body {
 
 #nombreFormaTV {
   max-width: 94vw;
-  font-size: clamp(1.5rem, 8vw, 5rem);
-  color: #ffc107;
+  font-weight: bold;
+  font-size: clamp(1.5rem, 8vw, 9rem);
+  color: #ffff00;
   margin-bottom: 20px;
   text-transform: uppercase;
   text-align: center;
