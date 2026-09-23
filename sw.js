@@ -1,4 +1,4 @@
-const CACHE_NAME = "torneo-tkd-v7";
+const CACHE_NAME = "torneo-tkd-v8";
 
 const urlsToCache = [
   "./",

@@ -5,15 +5,21 @@
   let tiempoInicio = 0;
   let tiempoAcumulado = 0;
   let limiteMs = 0;
-  let intervaloTV = null;
+  let animacionTV = null;
 
-  function formatearTiempo(milisegundosTotales) {
+  function formatearTiempo(milisegundosTotales, incluirMs = false) {
     const min = Math.floor(milisegundosTotales / 60000)
       .toString()
       .padStart(2, "0");
     const seg = Math.floor((milisegundosTotales % 60000) / 1000)
       .toString()
       .padStart(2, "0");
+
+    if (!incluirMs) {
+      const decima = Math.floor((milisegundosTotales % 1000) / 100);
+      return `${min}:${seg}.${decima}`;
+    }
+
     const ms = (milisegundosTotales % 1000).toString().padStart(3, "0");
     return `${min}:${seg}:${ms}`;
   }
@@ -26,12 +32,16 @@
 
     if (!display) return;
 
-    display.innerText = formatearTiempo(transcurrido);
+    // Mientras corre: solo mm:ss para el estadio
+    display.innerText = formatearTiempo(transcurrido, false);
+
     if (limiteMs > 0 && transcurrido >= limiteMs) {
       display.classList.add("tiempo-agotado");
     } else {
       display.classList.remove("tiempo-agotado");
     }
+
+    animacionTV = requestAnimationFrame(actualizarReloj);
   }
 
   function manejarComando(comando) {
@@ -41,23 +51,24 @@
     limiteMs = Number(comando.limite) || 0;
 
     if (comando.accion === "INICIAR") {
-      tiempoInicio = Date.now();
+      tiempoInicio = Number(comando.timestamp) || Date.now();
       tiempoAcumulado = Number(comando.tiempoAcumulado) || 0;
       enMarcha = true;
 
-      if (intervaloTV) clearInterval(intervaloTV);
-      intervaloTV = setInterval(actualizarReloj, 47);
+      if (animacionTV) cancelAnimationFrame(animacionTV);
+      actualizarReloj();
     } else if (comando.accion === "PAUSAR") {
       enMarcha = false;
 
-      if (intervaloTV) clearInterval(intervaloTV);
+      if (animacionTV) cancelAnimationFrame(animacionTV);
       tiempoAcumulado = Number(comando.tiempoAcumulado) || 0;
 
-      if (display) display.innerText = formatearTiempo(tiempoAcumulado);
+      // Al pausar: muestra el tiempo final exacto con milésimas
+      if (display) display.innerText = formatearTiempo(tiempoAcumulado, true);
     } else if (comando.accion === "REINICIAR") {
       enMarcha = false;
 
-      if (intervaloTV) clearInterval(intervaloTV);
+      if (animacionTV) cancelAnimationFrame(animacionTV);
       tiempoAcumulado = 0;
 
       if (display) {
