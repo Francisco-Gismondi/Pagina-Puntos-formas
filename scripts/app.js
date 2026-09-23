@@ -1,6 +1,5 @@
 (function () {
-  const { TULES, generarOpcionesTules, sortearFormas, obtenerRangoFormas } =
-    window.TorneoTules;
+  const { TULES, generarOpcionesTules, sortearFormas, obtenerRangoFormas } = window.TorneoTules;
   const { guardarCache, cargarCache, limpiarCache } = window.TorneoStorage;
   const { calcularPodio } = window.TorneoPodio;
   const { abrirNuevaLlave } = window.TorneoMesa;
@@ -17,9 +16,7 @@
     function actualizarEstadoCategoriaPersonalizada() {
       const select = document.getElementById("inputCategoria");
       const contenedor = document.getElementById("campoCategoriaPersonalizada");
-      const inputCustom = document.getElementById(
-        "inputCategoriaPersonalizada",
-      );
+      const inputCustom = document.getElementById("inputCategoriaPersonalizada");
 
       if (!select || !contenedor || !inputCustom) return;
 
@@ -37,11 +34,9 @@
     function actualizarTiempo(selectElem, idCompetidor, ronda) {
       const forma = selectElem.value;
       const tiempo = TULES[forma] ? TULES[forma] : "-";
-      const celdaTiempo = document.getElementById(
-        `tiempo_${idCompetidor}_${ronda}`,
-      );
+      const celdaTiempo = document.getElementById(`tiempo_${idCompetidor}_${ronda}`);
       if (celdaTiempo) celdaTiempo.innerText = tiempo;
-      guardarCache(contadorCompetidores); // Se eliminó la llamada a TorneoCronometro aquí[cite: 8]
+      guardarCache(contadorCompetidores);
     }
 
     function procesarNotas(id, ronda) {
@@ -111,15 +106,9 @@
     }
 
     function actualizarTotal(id) {
-      const sub1 =
-        parseInt(document.getElementById(`subtotal_${id}_1`)?.innerText, 10) ||
-        0;
-      const sub2 =
-        parseInt(document.getElementById(`subtotal_${id}_2`)?.innerText, 10) ||
-        0;
-      const sub3 =
-        parseInt(document.getElementById(`subtotal_${id}_3`)?.innerText, 10) ||
-        0;
+      const sub1 = parseInt(document.getElementById(`subtotal_${id}_1`)?.innerText, 10) || 0;
+      const sub2 = parseInt(document.getElementById(`subtotal_${id}_2`)?.innerText, 10) || 0;
+      const sub3 = parseInt(document.getElementById(`subtotal_${id}_3`)?.innerText, 10) || 0;
 
       const total = document.getElementById(`total_${id}`);
       if (total) total.innerText = (sub1 + sub2 + sub3).toFixed(0);
@@ -129,10 +118,7 @@
 
     function agregarCompetidor(datos = null) {
       const idGuardado = Number(datos?.id);
-      const id =
-        Number.isInteger(idGuardado) && idGuardado > 0
-          ? idGuardado
-          : contadorCompetidores + 1;
+      const id = Number.isInteger(idGuardado) && idGuardado > 0 ? idGuardado : contadorCompetidores + 1;
       contadorCompetidores = Math.max(contadorCompetidores, id);
 
       const tbody = document.getElementById("listaPuntajes");
@@ -199,9 +185,7 @@
 
       const nombreInput = document.getElementById(`nombre_${id}`);
       const btnDesempate = document.getElementById(`btn_desempate_${id}`);
-      const eliminarBtn = document.querySelector(
-        `.btn-eliminar[data-id="${id}"]`,
-      );
+      const eliminarBtn = document.querySelector(`.btn-eliminar[data-id="${id}"]`);
 
       if (btnDesempate) {
         btnDesempate.addEventListener("click", () => toggleDesempate(id));
@@ -212,49 +196,31 @@
       }
 
       if (nombreInput) {
-        nombreInput.addEventListener("input", () =>
-          guardarCache(contadorCompetidores),
-        );
+        nombreInput.addEventListener("input", () => guardarCache(contadorCompetidores));
       }
-
-      const esDispositivoMovil = window.matchMedia(
-        "(max-width: 1024px) and (pointer: coarse)",
-      ).matches;
 
       for (let ronda = 1; ronda <= 3; ronda++) {
         const select = document.getElementById(`forma_${id}_${ronda}`);
         if (select) {
           select.addEventListener("change", (event) => {
-            actualizarTiempo(
-              event.target,
-              id,
-              Number(event.target.dataset.ronda),
-            );
+            actualizarTiempo(event.target, id, Number(event.target.dataset.ronda));
           });
         }
 
         const celdaTiempo = document.getElementById(`tiempo_${id}_${ronda}`);
-        if (celdaTiempo && !esDispositivoMovil) {
-          // Estilos para que parezca un botón o enlace tocable
+        if (celdaTiempo) {
           celdaTiempo.style.cursor = "pointer";
           celdaTiempo.style.color = "#0056b3";
           celdaTiempo.style.fontWeight = "bold";
           celdaTiempo.style.textDecoration = "underline";
           celdaTiempo.title = "Tocar para enviar forma y tiempo a la TV";
 
-          // Evento que envía la forma al cronómetro al tocar
           celdaTiempo.addEventListener("click", () => {
             const formaSeleccionada = select.value;
-            if (
-              formaSeleccionada &&
-              formaSeleccionada !== "" &&
-              window.TorneoCronometro
-            ) {
+            if (formaSeleccionada && formaSeleccionada !== "" && window.TorneoCronometro) {
               window.TorneoCronometro.reiniciar(formaSeleccionada);
-
-              // Opcional: Feedback visual temporal
               const colorOriginal = celdaTiempo.style.color;
-              celdaTiempo.style.color = "#28a745"; // Verde de éxito
+              celdaTiempo.style.color = "#28a745";
               setTimeout(() => (celdaTiempo.style.color = colorOriginal), 500);
             }
           });
@@ -295,6 +261,10 @@
           procesarNotas(id, ronda);
         }
 
+        const filaDesempate = document.getElementById(`fila_3_${id}`);
+        if (filaDesempate && datos.desempateExcluido) {
+          filaDesempate.dataset.excluido = "true";
+        }
         if (datos.desempateActivo) toggleDesempate(id, true);
       }
 
@@ -308,20 +278,20 @@
       const btnDesempate = document.getElementById(`btn_desempate_${id}`);
 
       if (fila3.style.display === "none" || forceShow) {
+        fila3.dataset.excluido = "false";
         fila3.style.display = "table-row";
         tdNombre.rowSpan = 3;
         tdTotal.rowSpan = 3;
         if (btnDesempate) {
-          btnDesempate.innerHTML =
-            '<i class="fas fa-times-circle"></i> Quitar Desempate';
+          btnDesempate.innerHTML = '<i class="fas fa-times-circle"></i> Quitar Desempate';
         }
       } else {
+        fila3.dataset.excluido = "true";
         fila3.style.display = "none";
         tdNombre.rowSpan = 2;
         tdTotal.rowSpan = 2;
         if (btnDesempate) {
-          btnDesempate.innerHTML =
-            '<i class="fas fa-scale-balanced"></i> Desempate';
+          btnDesempate.innerHTML = '<i class="fas fa-scale-balanced"></i> Desempate';
         }
 
         for (let j = 1; j <= 5; j++) {
@@ -368,21 +338,9 @@
         const categoriaSeleccionada = select.value;
         const esPersonalizada = categoriaSeleccionada === "Personalizada";
 
-        const categoriaConSorteo = [
-          "1 Gup",
-          "1er Dan",
-          "2do Dan",
-          "3er Dan",
-          "4to Dan",
-          "5to Dan",
-          "Personalizada",
-        ];
+        const categoriaConSorteo = ["1 Gup", "1er Dan", "2do Dan", "3er Dan", "4to Dan", "5to Dan", "Personalizada"];
 
-        contenedorSorteo.style.display = categoriaConSorteo.includes(
-          categoriaSeleccionada,
-        )
-          ? "flex"
-          : "none";
+        contenedorSorteo.style.display = categoriaConSorteo.includes(categoriaSeleccionada) ? "flex" : "none";
 
         for (let i = 1; i <= contadorCompetidores; i++) {
           const selectIndividual = document.getElementById(`cinturon_${i}`);
@@ -439,10 +397,8 @@
           const celdaTiempo1 = document.getElementById(`tiempo_${i}_1`);
           const celdaTiempo2 = document.getElementById(`tiempo_${i}_2`);
 
-          if (celdaTiempo1)
-            celdaTiempo1.innerText = TULES[formasSorteadas.forma1] || "-";
-          if (celdaTiempo2)
-            celdaTiempo2.innerText = TULES[formasSorteadas.forma2] || "-";
+          if (celdaTiempo1) celdaTiempo1.innerText = TULES[formasSorteadas.forma1] || "-";
+          if (celdaTiempo2) celdaTiempo2.innerText = TULES[formasSorteadas.forma2] || "-";
         }
       }
 
@@ -457,18 +413,13 @@
         const inputNombre = document.getElementById(`nombre_${i}`);
         if (!inputNombre) continue;
 
-        const sub1 =
-          parseFloat(document.getElementById(`subtotal_${i}_1`)?.innerText) ||
-          0;
-        const sub2 =
-          parseFloat(document.getElementById(`subtotal_${i}_2`)?.innerText) ||
-          0;
-        const desempate =
-          parseFloat(document.getElementById(`subtotal_${i}_3`)?.innerText) ||
-          0;
+        const sub1 = parseFloat(document.getElementById(`subtotal_${i}_1`)?.innerText) || 0;
+        const sub2 = parseFloat(document.getElementById(`subtotal_${i}_2`)?.innerText) || 0;
+        const desempate = parseFloat(document.getElementById(`subtotal_${i}_3`)?.innerText) || 0;
         const base = sub1 + sub2;
+        const filaDesempate = document.getElementById(`fila_3_${i}`);
 
-        if (base > 0 || desempate > 0) {
+        if ((base > 0 || desempate > 0) && filaDesempate?.dataset.excluido !== "true") {
           competidoresActivos.push({ id: i, base, desempate });
         }
       }
@@ -493,10 +444,7 @@
 
       for (let i = 1; i < competidoresActivos.length; i++) {
         const comp = competidoresActivos[i];
-        if (
-          comp.base === rangoActual.base &&
-          comp.desempate === rangoActual.desempate
-        ) {
+        if (comp.base === rangoActual.base && comp.desempate === rangoActual.desempate) {
           rangoActual.competidores.push(comp);
         } else {
           rangos.push(rangoActual);
@@ -522,9 +470,7 @@
       }
 
       if (empatesEnPodio.length === 0) {
-        alert(
-          "No se detectaron empates pendientes en zona de podio (1°, 2° o 3° puesto).",
-        );
+        alert("No se detectaron empates pendientes en zona de podio (1°, 2° o 3° puesto).");
         return;
       }
 
@@ -537,29 +483,20 @@
         if (!select) return;
 
         const formasUsadas = [1, 2]
-          .map(
-            (ronda) =>
-              document.getElementById(`forma_${comp.id}_${ronda}`)?.value,
-          )
+          .map((ronda) => document.getElementById(`forma_${comp.id}_${ronda}`)?.value)
           .filter(Boolean);
 
-        const formasSorteadas = sortearFormas(
-          categoriaActual || "default",
-          formasUsadas,
-        );
-        const formaElegida =
-          Math.random() < 0.5 ? formasSorteadas.forma1 : formasSorteadas.forma2;
+        const { rango2 } = window.TorneoTules.obtenerRangoFormas(categoriaActual || "default");
 
-        if (formasUsadas.includes(formaElegida)) {
-          const formasDisponibles = obtenerRangoFormas(
-            categoriaActual || "default",
-          ).rango2.filter((forma) => !formasUsadas.includes(forma));
-          select.value =
-            formasDisponibles.length > 0 ? formasDisponibles[0] : formaElegida;
-        } else {
-          select.value = formaElegida;
+        const formasDisponibles = rango2.filter((forma) => !formasUsadas.includes(forma));
+
+        let formaElegida = "-";
+        if (formasDisponibles.length > 0) {
+          const indiceAleatorio = Math.floor(Math.random() * formasDisponibles.length);
+          formaElegida = formasDisponibles[indiceAleatorio];
         }
 
+        select.value = formaElegida;
         actualizarTiempo(select, comp.id, 3);
       });
 
@@ -569,11 +506,7 @@
     }
 
     function reiniciarPlanilla() {
-      if (
-        confirm(
-          "¿Estás seguro de reiniciar la planilla? Se borrará todo para comenzar una nueva categoría.",
-        )
-      ) {
+      if (confirm("¿Estás seguro de reiniciar la planilla? Se borrará todo para comenzar una nueva categoría.")) {
         limpiarCache();
         location.reload();
       }
@@ -582,13 +515,10 @@
     function actualizarTiempo(selectElem, idCompetidor, ronda) {
       const forma = selectElem.value;
       const tiempo = TULES[forma] ? TULES[forma] : "-";
-      const celdaTiempo = document.getElementById(
-        `tiempo_${idCompetidor}_${ronda}`,
-      );
+      const celdaTiempo = document.getElementById(`tiempo_${idCompetidor}_${ronda}`);
 
       if (celdaTiempo) celdaTiempo.innerText = tiempo;
 
-      // NUEVO: Reiniciar cronómetro y pasarlo a cero al cambiar la forma
       if (window.TorneoCronometro) {
         window.TorneoCronometro.reiniciar(forma);
       }
@@ -619,10 +549,8 @@
 
         const cat = getCategoriaActual() || "";
         const edad = document.getElementById("inputEdad").value || "";
-        const catNombre =
-          cat.trim().replace(/[\\/\\:*?"<>|]/g, "_") || "SinCategoria";
-        const edadNombre =
-          edad.trim().replace(/[\\/\\:*?"<>|]/g, "_") || "SinEdad";
+        const catNombre = cat.trim().replace(/[\\/\\:*?"<>|]/g, "_") || "SinCategoria";
+        const edadNombre = edad.trim().replace(/[\\/\\:*?"<>|]/g, "_") || "SinEdad";
         const nombreArchivo = `Planilla_Formas_${catNombre}_${edadNombre}.xlsx`;
 
         datosExcel.push(["Categoría / Cinturón:", cat, "", "Edades:", edad]);
@@ -651,26 +579,14 @@
           const forma1 = document.getElementById(`forma_${i}_1`).value || "-";
           const tiempo1 = document.getElementById(`tiempo_${i}_1`).innerText;
           const sub1 = document.getElementById(`subtotal_${i}_1`).innerText;
-          const j1 = [1, 2, 3, 4, 5].map(
-            (j) => document.getElementById(`j${j}_${i}_1`).value || 0,
-          );
+          const j1 = [1, 2, 3, 4, 5].map((j) => document.getElementById(`j${j}_${i}_1`).value || 0);
 
-          datosExcel.push([
-            nombre,
-            "1ra Forma",
-            forma1,
-            tiempo1,
-            ...j1,
-            sub1,
-            total,
-          ]);
+          datosExcel.push([nombre, "1ra Forma", forma1, tiempo1, ...j1, sub1, total]);
 
           const forma2 = document.getElementById(`forma_${i}_2`).value || "-";
           const tiempo2 = document.getElementById(`tiempo_${i}_2`).innerText;
           const sub2 = document.getElementById(`subtotal_${i}_2`).innerText;
-          const j2 = [1, 2, 3, 4, 5].map(
-            (j) => document.getElementById(`j${j}_${i}_2`).value || 0,
-          );
+          const j2 = [1, 2, 3, 4, 5].map((j) => document.getElementById(`j${j}_${i}_2`).value || 0);
 
           datosExcel.push(["", "2da Forma", forma2, tiempo2, ...j2, sub2, ""]);
 
@@ -678,18 +594,8 @@
             const forma3 = document.getElementById(`forma_${i}_3`).value || "-";
             const tiempo3 = document.getElementById(`tiempo_${i}_3`).innerText;
             const sub3 = document.getElementById(`subtotal_${i}_3`).innerText;
-            const j3 = [1, 2, 3, 4, 5].map(
-              (j) => document.getElementById(`j${j}_${i}_3`).value || 0,
-            );
-            datosExcel.push([
-              "",
-              "Desempate",
-              forma3,
-              tiempo3,
-              ...j3,
-              sub3,
-              "",
-            ]);
+            const j3 = [1, 2, 3, 4, 5].map((j) => document.getElementById(`j${j}_${i}_3`).value || 0);
+            datosExcel.push(["", "Desempate", forma3, tiempo3, ...j3, sub3, ""]);
           }
         }
 
@@ -719,9 +625,7 @@
 
       if (estado) {
         let catSelect = document.getElementById("inputCategoria");
-        let inputCustom = document.getElementById(
-          "inputCategoriaPersonalizada",
-        );
+        let inputCustom = document.getElementById("inputCategoriaPersonalizada");
 
         if (catSelect && estado.categoria) {
           catSelect.value = estado.categoria;
@@ -747,39 +651,17 @@
     }
 
     function inicializarControles() {
-      document
-        .getElementById("btnAgregarCompetidor")
-        ?.addEventListener("click", agregarCompetidor);
-      document
-        .getElementById("btnCalcularPodio")
-        ?.addEventListener("click", () => calcularPodio(contadorCompetidores));
-      document
-        .getElementById("btnNuevaLlave")
-        ?.addEventListener("click", abrirNuevaLlave);
-      document
-        .getElementById("btnExportarExcel")
-        ?.addEventListener("click", exportarExcel);
-      document
-        .getElementById("btnExportarPDF")
-        ?.addEventListener("click", exportarPDF);
-      document
-        .getElementById("btnReiniciarPlanilla")
-        ?.addEventListener("click", reiniciarPlanilla);
-      document
-        .getElementById("btnSortearFormas")
-        ?.addEventListener("click", sortearYAsignar);
-      document
-        .getElementById("btnSortearDesempate")
-        ?.addEventListener("click", sortearFormaEmpate);
-      document
-        .getElementById("inputCategoria")
-        ?.addEventListener("change", verificarBotonSorteo);
-      document
-        .getElementById("inputCategoriaPersonalizada")
-        ?.addEventListener("input", verificarBotonSorteo);
-      document
-        .getElementById("inputEdad")
-        ?.addEventListener("change", verificarBotonSorteo);
+      document.getElementById("btnAgregarCompetidor")?.addEventListener("click", agregarCompetidor);
+      document.getElementById("btnCalcularPodio")?.addEventListener("click", () => calcularPodio(contadorCompetidores));
+      document.getElementById("btnNuevaLlave")?.addEventListener("click", abrirNuevaLlave);
+      document.getElementById("btnExportarExcel")?.addEventListener("click", exportarExcel);
+      document.getElementById("btnExportarPDF")?.addEventListener("click", exportarPDF);
+      document.getElementById("btnReiniciarPlanilla")?.addEventListener("click", reiniciarPlanilla);
+      document.getElementById("btnSortearFormas")?.addEventListener("click", sortearYAsignar);
+      document.getElementById("btnSortearDesempate")?.addEventListener("click", sortearFormaEmpate);
+      document.getElementById("inputCategoria")?.addEventListener("change", verificarBotonSorteo);
+      document.getElementById("inputCategoriaPersonalizada")?.addEventListener("input", verificarBotonSorteo);
+      document.getElementById("inputEdad")?.addEventListener("change", verificarBotonSorteo);
       document.addEventListener(
         "wheel",
         function (event) {
@@ -789,18 +671,19 @@
         },
         { passive: false },
       );
-      document
-        .getElementById("btnCronoPlay")
-        ?.addEventListener("click", window.TorneoCronometro.iniciar);
-      document
-        .getElementById("btnCronoPausa")
-        ?.addEventListener("click", window.TorneoCronometro.pausar);
-      document
-        .getElementById("btnCronoReset")
-        ?.addEventListener("click", () => window.TorneoCronometro.reiniciar());
-      document
-        .getElementById("btnAbrirTV")
-        ?.addEventListener("click", window.TorneoCronometro.abrirTV);
+      document.addEventListener("keydown", (event) => {
+        const elementoActivo = document.activeElement;
+        const esCampoEditable = elementoActivo?.matches('input, textarea, select, button, [contenteditable="true"]');
+
+        if (event.code !== "Space" || event.repeat || esCampoEditable) return;
+
+        event.preventDefault();
+        window.TorneoCronometro.alternar();
+      });
+      document.getElementById("btnCronoPlay")?.addEventListener("click", window.TorneoCronometro.iniciar);
+      document.getElementById("btnCronoPausa")?.addEventListener("click", window.TorneoCronometro.pausar);
+      document.getElementById("btnCronoReset")?.addEventListener("click", () => window.TorneoCronometro.reiniciar());
+      document.getElementById("btnAbrirTV")?.addEventListener("click", window.TorneoCronometro.abrirTV);
     }
 
     inicializarControles();

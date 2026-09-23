@@ -7,8 +7,9 @@
       const subtotal1 = document.getElementById(`subtotal_${i}_1`);
       const subtotal2 = document.getElementById(`subtotal_${i}_2`);
       const subtotal3 = document.getElementById(`subtotal_${i}_3`);
+      const filaDesempate = document.getElementById(`fila_3_${i}`);
 
-      if (nombreInput) {
+      if (nombreInput && filaDesempate?.dataset.excluido !== "true") {
         const nombre = nombreInput.value.trim() || `Competidor ${i}`;
         const base =
           (parseFloat(subtotal1?.innerText) || 0) +
@@ -29,16 +30,25 @@
     for (let i = 1; i <= contadorCompetidores; i++) {
       const btnDesempate = document.getElementById(`btn_desempate_${i}`);
       const fila3 = document.getElementById(`fila_3_${i}`);
+      const excluido = fila3?.dataset.excluido === "true";
 
       if (btnDesempate && fila3) {
-        if (fila3.style.display !== "none") {
+        if (fila3.style.display !== "none" && !excluido) {
           btnDesempate.style.display = "block";
           btnDesempate.innerHTML =
             '<i class="fas fa-times-circle"></i> Quitar Desempate';
         } else {
-          btnDesempate.style.display = "none";
+          btnDesempate.style.display = excluido ? "block" : "none";
           btnDesempate.innerHTML =
             '<i class="fas fa-scale-balanced"></i> Desempate';
+        }
+
+        if (excluido) {
+          fila3.style.display = "none";
+          const tdNombre = document.getElementById(`celda_nombre_${i}`);
+          const tdTotal = document.getElementById(`total_${i}`);
+          if (tdNombre) tdNombre.rowSpan = 2;
+          if (tdTotal) tdTotal.rowSpan = 2;
         }
       }
     }
@@ -113,14 +123,16 @@
       const fila3 = document.getElementById(`fila_3_${i}`);
       const tdNombre = document.getElementById(`celda_nombre_${i}`);
       const tdTotal = document.getElementById(`total_${i}`);
-      const perteneceAlPodioEmpatado = idsEmpatePodio.has(i);
+      const excluido = fila3?.dataset.excluido === "true";
+      const perteneceAlPodioEmpatado = !excluido && idsEmpatePodio.has(i);
       const filaActiva =
-        (fila3 && fila3.style.display !== "none") ||
-        (fila3 && fila3.dataset.activo === "true");
+        !excluido &&
+        ((fila3 && fila3.style.display !== "none") ||
+          (fila3 && fila3.dataset.activo === "true"));
 
       if (btn) {
         btn.style.display =
-          perteneceAlPodioEmpatado || filaActiva ? "block" : "none";
+          perteneceAlPodioEmpatado || filaActiva || excluido ? "block" : "none";
 
         if (perteneceAlPodioEmpatado || filaActiva) {
           btn.innerHTML =

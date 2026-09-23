@@ -61,6 +61,7 @@
         desempateActivo: filaDesempate
           ? filaDesempate.style.display !== "none"
           : false,
+        desempateExcluido: filaDesempate?.dataset.excluido === "true",
       });
     }
 

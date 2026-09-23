@@ -1,4 +1,6 @@
 (function () {
+  const canalTv = new BroadcastChannel(`canal_cronometro_global`);
+
   let tiempoInicio = 0;
   let tiempoAcumulado = 0;
   let enMarcha = false;
@@ -24,9 +26,6 @@
   }
 
   function emitirATV(accion) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const idMesa = urlParams.get("mesa") || "default";
-
     const comando = {
       accion: accion,
       nombreForma: formaActual,
@@ -34,10 +33,7 @@
       tiempoAcumulado: tiempoAcumulado,
       timestamp: Date.now(),
     };
-    localStorage.setItem(
-      `comando_cronometro_${idMesa}`,
-      JSON.stringify(comando),
-    );
+    canalTv.postMessage(comando);
   }
 
   function buclePC() {
@@ -47,10 +43,7 @@
     const displayPC = document.getElementById("displayCronometroPC");
     if (displayPC) {
       displayPC.innerText = formatearTiempo(transcurrido);
-      displayPC.style.color =
-        limiteActualMs > 0 && transcurrido >= limiteActualMs
-          ? "#dc3545"
-          : "white";
+      displayPC.style.color = limiteActualMs > 0 && transcurrido >= limiteActualMs ? "#dc3545" : "white";
     }
   }
 
@@ -70,6 +63,14 @@
     tiempoAcumulado += Date.now() - tiempoInicio;
     emitirATV("PAUSAR");
     buclePC();
+  }
+
+  function alternar() {
+    if (enMarcha) {
+      pausar();
+    } else {
+      iniciar();
+    }
   }
 
   function reiniciar(nombreForma = null) {
@@ -98,12 +99,8 @@
   function abrirTV() {
     const urlParams = new URLSearchParams(window.location.search);
     const idMesa = urlParams.get("mesa");
-    window.open(
-      `./pages/marcador.html?mesa=${idMesa}`,
-      "MarcadorTV",
-      "width=800,height=600",
-    );
+    window.open(`./pages/marcador.html?mesa=${idMesa}`, "MarcadorTV", "width=800,height=600");
   }
 
-  window.TorneoCronometro = { iniciar, pausar, reiniciar, abrirTV };
+  window.TorneoCronometro = { iniciar, pausar, alternar, reiniciar, abrirTV };
 })();

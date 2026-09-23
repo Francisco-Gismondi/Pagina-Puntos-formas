@@ -291,8 +291,8 @@ th {
 
   #tablaCompetidores th:nth-child(3),
   #tablaCompetidores td:nth-child(3) {
-    width: 160px;
-    min-width: 160px;
+    width: 60px;
+    min-width: 60px;
   }
 
   #tablaCompetidores td select {
@@ -304,6 +304,7 @@ th {
   #tablaCompetidores td input {
     background-color: #ffffff;
     min-height: 36px;
+    width: 200px;
     font-size: 0.8rem;
   }
 
@@ -352,7 +353,7 @@ th {
 
     #tablaCompetidores th:nth-child(3),
     #tablaCompetidores td:nth-child(3) {
-      width: 180px;
+      width: 50px;
     }
 
     #tablaCompetidores td select {

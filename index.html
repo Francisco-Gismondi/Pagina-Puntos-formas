@@ -2,10 +2,7 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="icon" type="image/png" href="./images/icon.png" />
     <title>Torneo Taekwondo - Formas</title>
     <link rel="stylesheet" href="./styles/base.css" />
@@ -16,10 +13,7 @@
     <link rel="stylesheet" href="./styles/manual.css" />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   </head>
   <body>
     <div class="page-shell">
@@ -32,11 +26,7 @@
             rel="noopener noreferrer"
             aria-label="Abrir la página en una nueva pestaña"
           >
-            <img
-              class="titulo-icono"
-              src="./images/icon.png"
-              alt="Logo de Taekwondo"
-            />
+            <img class="titulo-icono" src="./images/icon.png" alt="Logo de Taekwondo" />
             <h1 class="titulo-pagina">Planilla de Puntuación - Formas</h1>
           </a>
         </div>
@@ -49,43 +39,20 @@
               <button id="btnAgregarCompetidor" class="btn-agregar">
                 <i class="fas fa-user-plus"></i> Agregar Competidor
               </button>
-              <button id="btnCalcularPodio" class="btn-podio">
-                <i class="fas fa-trophy"></i> Calcular Podio
-              </button>
+              <button id="btnCalcularPodio" class="btn-podio"><i class="fas fa-trophy"></i> Calcular Podio</button>
             </div>
-            <div
-              class="cronometro-widget"
-              aria-label="Controles del cronómetro"
-            >
-              <span id="displayCronometroPC" class="display-cronometro"
-                >00:00:000</span
-              >
-              <button
-                id="btnCronoPlay"
-                class="btn-cronometro btn-cronometro-play"
-                title="Iniciar"
-              >
+            <div class="cronometro-widget" aria-label="Controles del cronómetro">
+              <span id="displayCronometroPC" class="display-cronometro">00:00:000</span>
+              <button id="btnCronoPlay" class="btn-cronometro btn-cronometro-play" title="Iniciar">
                 <i class="fas fa-play"></i>
               </button>
-              <button
-                id="btnCronoPausa"
-                class="btn-cronometro btn-cronometro-pausa"
-                title="Pausar"
-              >
+              <button id="btnCronoPausa" class="btn-cronometro btn-cronometro-pausa" title="Pausar">
                 <i class="fas fa-pause"></i>
               </button>
-              <button
-                id="btnCronoReset"
-                class="btn-cronometro btn-cronometro-reset"
-                title="Reiniciar"
-              >
+              <button id="btnCronoReset" class="btn-cronometro btn-cronometro-reset" title="Reiniciar">
                 <i class="fas fa-stop"></i>
               </button>
-              <button
-                id="btnAbrirTV"
-                class="btn-cronometro btn-cronometro-tv"
-                title="Abrir Monitor"
-              >
+              <button id="btnAbrirTV" class="btn-cronometro btn-cronometro-tv" title="Abrir Monitor">
                 <i class="fas fa-tv"></i>
               </button>
             </div>
@@ -96,19 +63,14 @@
               <button id="btnExportarExcel" class="btn-excel">
                 <i class="fas fa-file-excel"></i> Exportar a Excel
               </button>
-              <button id="btnExportarPDF" class="btn-pdf">
-                <i class="fas fa-file-pdf"></i> Exportar a PDF
-              </button>
+              <button id="btnExportarPDF" class="btn-pdf"><i class="fas fa-file-pdf"></i> Exportar a PDF</button>
               <button id="btnReiniciarPlanilla" class="btn-reiniciar">
                 <i class="fas fa-sync-alt"></i> Reiniciar Plantilla
               </button>
             </div>
           </div>
 
-          <section
-            id="zona-impresion"
-            aria-label="Zona de impresión de la planilla"
-          >
+          <section id="zona-impresion" aria-label="Zona de impresión de la planilla">
             <h2>Planilla de Puntuación - Formas</h2>
 
             <div class="encabezado-torneo">
@@ -130,34 +92,16 @@
                 <label for="inputEdad">Edades:</label>
                 <select id="inputEdad">
                   <option value="">Seleccione la edad...</option>
-                  <option value="Cadete (12 a 13 años)">
-                    Cadete (12 a 13 años)
-                  </option>
-                  <option value="Juvenil (14 a 17 años)">
-                    Juvenil (14 a 17 años)
-                  </option>
-                  <option value="Adultos (18 a 34 años)">
-                    Adultos (18 a 34 años)
-                  </option>
-                  <option value="Veteranos Seniors (35 a 44 años)">
-                    Veteranos Seniors (35 a 44 años)
-                  </option>
-                  <option value="Veteranos (45 años o más)">
-                    Veteranos (45 años o más)
-                  </option>
+                  <option value="Cadete (12 a 13 años)">Cadete (12 a 13 años)</option>
+                  <option value="Juvenil (14 a 17 años)">Juvenil (14 a 17 años)</option>
+                  <option value="Adultos (18 a 34 años)">Adultos (18 a 34 años)</option>
+                  <option value="Veteranos Seniors (35 a 44 años)">Veteranos Seniors (35 a 44 años)</option>
+                  <option value="Veteranos (45 años o más)">Veteranos (45 años o más)</option>
                 </select>
               </div>
 
-              <div
-                class="campo ocultar-en-pdf"
-                id="contenedor_sorteo"
-                style="justify-content: flex-end; display: none"
-              >
-                <button
-                  id="btnSortearFormas"
-                  class="btn-agregar"
-                  style="background-color: #17a2b8"
-                >
+              <div class="campo ocultar-en-pdf" id="contenedor_sorteo" style="justify-content: flex-end; display: none">
+                <button id="btnSortearFormas" class="btn-agregar" style="background-color: #17a2b8">
                   <i class="fas fa-dice"></i> Sortear Formas
                 </button>
               </div>
@@ -182,23 +126,10 @@
                 <tbody id="listaPuntajes"></tbody>
               </table>
             </div>
-            <section
-              class="seccion-podio"
-              id="seccionPodio"
-              style="display: none"
-              aria-label="Podio del torneo"
-            >
+            <section class="seccion-podio" id="seccionPodio" style="display: none" aria-label="Podio del torneo">
               <h3>Podio Actual</h3>
-              <div
-                class="podio-acciones"
-                id="accionesPodio"
-                style="display: none; margin-bottom: 1rem"
-              >
-                <button
-                  id="btnSortearDesempate"
-                  class="btn-agregar ocultar-en-pdf"
-                  style="background-color: #17a2b8"
-                >
+              <div class="podio-acciones" id="accionesPodio" style="display: none; margin-bottom: 1rem">
+                <button id="btnSortearDesempate" class="btn-agregar ocultar-en-pdf" style="background-color: #17a2b8">
                   <i class="fas fa-dice"></i> Sortear Forma de Empate
                 </button>
               </div>
@@ -212,20 +143,20 @@
         <nav class="manual-footer-nav" aria-label="Navegación del sitio">
           <a href="./pages/manual.html">Manual de Usuario </a>
         </nav>
-        <p>Desarrollado por <strong>FranGis</strong></p>
+        <p>
+          Desarrollado por
+          <a href="https://github.com/Francisco-Gismondi" target="_blank">
+            <strong>Fran_Gis</strong>
+          </a>
+        </p>
       </footer>
     </div>
-
-    <!-- Carga de scripts principales -->
     <script src="./scripts/tules.js"></script>
     <script src="./scripts/mesa.js"></script>
     <script src="./scripts/storage.js"></script>
     <script src="./scripts/podio.js"></script>
     <script src="./scripts/cronometro.js"></script>
-    <script
-      src="./scripts/inicializacion.js"
-      data-service-worker="./sw.js"
-    ></script>
+    <script src="./scripts/inicializacion.js" data-service-worker="./sw.js"></script>
     <script src="./scripts/app.js"></script>
   </body>
 </html>
