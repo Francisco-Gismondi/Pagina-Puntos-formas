@@ -14,9 +14,9 @@
     "GE-BAEK": "63 seg",
     "EUI-AM": "74 seg",
     "CHOONG-JANG": "87 seg",
-    JUCHE: "100 seg",
+    "JUCHE": "100 seg",
     "SAM-IL": "62 seg",
-    "YU-SIN": "104 seg",
+    "YOO-SIN": "104 seg",
     "CHOI-YONG": "75 seg",
     "YON-GAE": "87 seg",
     "UL-JI": "66 seg",
@@ -63,7 +63,7 @@
         );
         break;
       case "3er Dan":
-        rango1 = ["SAM-IL", "YU-SIN", "CHOI-YONG"];
+        rango1 = ["SAM-IL", "YOO-SIN", "CHOI-YONG"];
         rango2 = ordenTules.slice(
           ordenTules.indexOf("JOONG-GUN"),
           ordenTules.indexOf("CHOI-YONG") + 1,
