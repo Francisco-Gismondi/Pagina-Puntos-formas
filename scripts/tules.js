@@ -121,8 +121,14 @@
     let f1 = bolsasRango1[categoria].pop();
     let f2 = bolsasRango2[categoria].pop();
 
-    if (f1 === f2 && rango2.length > 1) {
+    while (f1 === f2 && rango2.length > 1) {
       bolsasRango2[categoria].unshift(f2);
+
+      if (bolsasRango2[categoria].length === 1) {
+        bolsasRango2[categoria] = bolsasRango2[categoria].concat(
+          mezclar(rango2),
+        );
+      }
       f2 = bolsasRango2[categoria].pop();
     }
 

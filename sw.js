@@ -1,4 +1,4 @@
-const CACHE_NAME = "torneo-tkd-v6";
+const CACHE_NAME = "torneo-tkd-v8";
 
 const urlsToCache = [
   "./",
@@ -19,6 +19,7 @@ const urlsToCache = [
   "./images/icon.png",
   "./pages/marcador.html",
   "./scripts/cronometro.js",
+  "./scripts/marcador.js",
   "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2",
@@ -28,7 +29,7 @@ const urlsToCache = [
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log("Caché abierto v4");
+      console.log("Caché abierto");
       return cache.addAll(urlsToCache);
     }),
   );
@@ -39,48 +40,35 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
   event.respondWith(
-    caches
-      .match(event.request, { ignoreSearch: true })
-      .then((cachedResponse) => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
+    caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
 
-        return fetch(event.request)
-          .then((networkResponse) => {
-            const isSameOrigin = event.request.url.startsWith(
-              self.location.origin,
-            );
-            const isCdn = event.request.url.startsWith(
-              "https://cdnjs.cloudflare.com",
-            );
+      return fetch(event.request)
+        .then((networkResponse) => {
+          const isSameOrigin = event.request.url.startsWith(self.location.origin);
+          const isCdn = event.request.url.startsWith("https://cdnjs.cloudflare.com");
 
-            if (
-              networkResponse &&
-              networkResponse.status === 200 &&
-              (isSameOrigin || isCdn)
-            ) {
-              const responseClone = networkResponse.clone();
-              caches.open(CACHE_NAME).then((cache) => {
-                cache.put(event.request, responseClone);
-              });
-            }
-            return networkResponse;
-          })
-          .catch(() => {
-            if (event.request.mode === "navigate") {
-              return (
-                caches.match("./index.html", { ignoreSearch: true }) ||
-                caches.match("./pages/manual.html", { ignoreSearch: true }) ||
-                Response.error()
-              );
-            }
+          if (networkResponse && networkResponse.status === 200 && (isSameOrigin || isCdn)) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseClone);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          if (event.request.mode === "navigate") {
             return (
-              caches.match(event.request, { ignoreSearch: true }) ||
+              caches.match("./index.html", { ignoreSearch: true }) ||
+              caches.match("./pages/manual.html", { ignoreSearch: true }) ||
               Response.error()
             );
-          });
-      }),
+          }
+          return caches.match(event.request, { ignoreSearch: true }) || Response.error();
+        });
+    }),
   );
 });
 
