@@ -1,261 +1,139 @@
 (function () {
+  function rondaCompleta(id, ronda) {
+    return [1, 2, 3, 4, 5].every((juez) => {
+      const input = document.getElementById(`j${juez}_${id}_${ronda}`);
+      return input && input.value.trim() !== "" && Number.isFinite(Number(input.value));
+    });
+  }
+
+  function escaparHTML(valor) {
+    return String(valor)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
   function calcularPodio(contadorCompetidores) {
     const competidores = [];
+    const incompletos = [];
 
-    for (let i = 1; i <= contadorCompetidores; i++) {
-      const nombreInput = document.getElementById(`nombre_${i}`);
-      const subtotal1 = document.getElementById(`subtotal_${i}_1`);
-      const subtotal2 = document.getElementById(`subtotal_${i}_2`);
-      const subtotal3 = document.getElementById(`subtotal_${i}_3`);
-      const filaDesempate = document.getElementById(`fila_3_${i}`);
+    for (let id = 1; id <= contadorCompetidores; id++) {
+      const nombreInput = document.getElementById(`nombre_${id}`);
+      if (!nombreInput) continue;
 
-      if (nombreInput && filaDesempate?.dataset.excluido !== "true") {
-        const nombre = nombreInput.value.trim() || `Competidor ${i}`;
-        const base =
-          (parseFloat(subtotal1?.innerText) || 0) +
-          (parseFloat(subtotal2?.innerText) || 0);
-        const desempate = parseFloat(subtotal3?.innerText) || 0;
-
-        if (base > 0 || desempate > 0) {
-          competidores.push({
-            id: i,
-            nombre,
-            base,
-            desempate,
-          });
-        }
+      const filaDesempate = document.getElementById(`fila_3_${id}`);
+      if (!rondaCompleta(id, 1) || !rondaCompleta(id, 2)) {
+        incompletos.push(nombreInput.value.trim() || `Competidor ${id}`);
+        continue;
       }
-    }
-
-    for (let i = 1; i <= contadorCompetidores; i++) {
-      const btnDesempate = document.getElementById(`btn_desempate_${i}`);
-      const fila3 = document.getElementById(`fila_3_${i}`);
-      const excluido = fila3?.dataset.excluido === "true";
-
-      if (btnDesempate && fila3) {
-        if (fila3.style.display !== "none" && !excluido) {
-          btnDesempate.style.display = "block";
-          btnDesempate.innerHTML =
-            '<i class="fas fa-times-circle"></i> Quitar Desempate';
-        } else {
-          btnDesempate.style.display = excluido ? "block" : "none";
-          btnDesempate.innerHTML =
-            '<i class="fas fa-scale-balanced"></i> Desempate';
-        }
-
-        if (excluido) {
-          fila3.style.display = "none";
-          const tdNombre = document.getElementById(`celda_nombre_${i}`);
-          const tdTotal = document.getElementById(`total_${i}`);
-          if (tdNombre) tdNombre.rowSpan = 2;
-          if (tdTotal) tdTotal.rowSpan = 2;
-        }
+      if (filaDesempate?.dataset.activo === "true" && !rondaCompleta(id, 3)) {
+        incompletos.push(nombreInput.value.trim() || `Competidor ${id}`);
+        continue;
       }
-    }
 
-    competidores.sort((a, b) => {
-      if (b.base !== a.base) return b.base - a.base;
-      if (b.desempate !== a.desempate) return b.desempate - a.desempate;
-      return 0;
-    });
+      competidores.push({
+        id,
+        nombre: nombreInput.value.trim() || `Competidor ${id}`,
+        base: (parseFloat(document.getElementById(`subtotal_${id}_1`)?.innerText) || 0) +
+          (parseFloat(document.getElementById(`subtotal_${id}_2`)?.innerText) || 0),
+        desempate: parseFloat(document.getElementById(`subtotal_${id}_3`)?.innerText) || 0,
+      });
+    }
 
     const podioDOM = document.getElementById("podioContainer");
     const seccionPodio = document.getElementById("seccionPodio");
     const accionesPodio = document.getElementById("accionesPodio");
-    podioDOM.innerHTML = "";
+    if (!podioDOM || !seccionPodio) return;
 
-    if (!competidores.length) {
+    if (incompletos.length > 0) {
+      podioDOM.replaceChildren();
+      seccionPodio.style.display = "none";
+      if (accionesPodio) accionesPodio.style.display = "none";
+      alert(`Faltan las cinco notas en: ${incompletos.join(", ")}.`);
+      return;
+    }
+
+    competidores.sort((a, b) =>
+      b.base - a.base || b.desempate - a.desempate || a.id - b.id,
+    );
+
+    const rangos = [];
+    for (const competidor of competidores) {
+      const ultimo = rangos[rangos.length - 1];
+      if (ultimo && ultimo.puntaje === competidor.base && ultimo.desempate === competidor.desempate) {
+        ultimo.competidores.push(competidor);
+      } else {
+        rangos.push({ puntaje: competidor.base, desempate: competidor.desempate, competidores: [competidor] });
+      }
+    }
+
+    podioDOM.replaceChildren();
+    if (competidores.length === 0) {
       seccionPodio.style.display = "none";
       if (accionesPodio) accionesPodio.style.display = "none";
       return;
     }
 
     seccionPodio.style.display = "block";
-    if (accionesPodio) accionesPodio.style.display = "none";
-
-    const rangos = [];
-    let rangoActual = {
-      puntaje: competidores[0].base,
-      desempate: competidores[0].desempate,
-      competidores: [competidores[0]],
-    };
-
-    for (let i = 1; i < competidores.length; i++) {
-      const esMismoGrupo =
-        competidores[i].base === rangoActual.puntaje &&
-        competidores[i].desempate === rangoActual.desempate;
-
-      if (esMismoGrupo) {
-        rangoActual.competidores.push(competidores[i]);
-      } else {
-        rangos.push(rangoActual);
-        rangoActual = {
-          puntaje: competidores[i].base,
-          desempate: competidores[i].desempate,
-          competidores: [competidores[i]],
-        };
-      }
-    }
-
-    rangos.push(rangoActual);
-
-    const gruposPodio = (() => {
-      const gruposValidos = [];
-      let lugaresOcupados = 0;
-      for (const rango of rangos) {
-        if (lugaresOcupados >= 3) break;
-
-        if (rango.competidores.length > 1) {
-          gruposValidos.push(rango);
-        }
-        lugaresOcupados += rango.competidores.length;
-      }
-      return gruposValidos;
-    })();
-
-    const idsEmpatePodio = new Set();
-    gruposPodio.forEach((rango) => {
-      rango.competidores.forEach((comp) => idsEmpatePodio.add(comp.id));
-    });
-
-    for (let i = 1; i <= contadorCompetidores; i++) {
-      const btn = document.getElementById(`btn_desempate_${i}`);
-      const fila3 = document.getElementById(`fila_3_${i}`);
-      const tdNombre = document.getElementById(`celda_nombre_${i}`);
-      const tdTotal = document.getElementById(`total_${i}`);
-      const excluido = fila3?.dataset.excluido === "true";
-      const perteneceAlPodioEmpatado = !excluido && idsEmpatePodio.has(i);
-      const filaActiva =
-        !excluido &&
-        ((fila3 && fila3.style.display !== "none") ||
-          (fila3 && fila3.dataset.activo === "true"));
-
-      if (btn) {
-        btn.style.display =
-          perteneceAlPodioEmpatado || filaActiva || excluido ? "block" : "none";
-
-        if (perteneceAlPodioEmpatado || filaActiva) {
-          btn.innerHTML =
-            '<i class="fas fa-times-circle"></i> Quitar Desempate';
-          btn.classList.add("btn-peligro");
-        } else {
-          btn.innerHTML = '<i class="fas fa-scale-balanced"></i> Desempate';
-          btn.classList.remove("btn-peligro");
-        }
-      }
-
-      if (fila3) {
-        if (perteneceAlPodioEmpatado || filaActiva) {
-          fila3.style.display = "table-row";
-          if (tdNombre) tdNombre.rowSpan = 3;
-          if (tdTotal) tdTotal.rowSpan = 3;
-        } else {
-          fila3.style.display = "none";
-          if (tdNombre) tdNombre.rowSpan = 2;
-          if (tdTotal) tdTotal.rowSpan = 2;
-        }
-      }
-    }
-
-    if (accionesPodio) {
-      accionesPodio.style.display = gruposPodio.length > 0 ? "block" : "none";
-    }
-
-    function armarEscalon(rango, claseCss, titulo, etiquetaPosicion, detalle) {
-      const esEmpate = rango.competidores.length > 1;
-      const nombresHTML = rango.competidores
-        .map((c) => c.nombre)
-        .join("<br><small><i>y</i></small><br>");
-      const desempateTexto =
-        rango.competidores.length === 1 && rango.desempate > 0
-          ? `<div class="alerta-empate"> Puntos Desempate: ${rango.desempate} pts</div>`
-          : esEmpate
-            ? `<div class="alerta-empate">⚠️ ${detalle || `Desempate por ${etiquetaPosicion}`}</div>`
-            : "";
-
-      return `
-        <div class="puesto ${claseCss}">
-          ${titulo}<br>
-          <span class="nombres-podio">${nombresHTML}</span>
-          <span>${rango.puntaje} pts</span>
-          ${desempateTexto}
-        </div>
-      `;
-    }
-
-    let puestoActual = 1;
-    let oro = null,
-      plata = null,
-      bronce = null;
-
+    const gruposEmpatados = [];
+    let lugaresOcupados = 0;
     for (const rango of rangos) {
-      if (puestoActual === 1) {
-        oro = rango;
-        puestoActual += rango.competidores.length;
-      } else if (puestoActual === 2) {
-        plata = rango;
-        puestoActual += rango.competidores.length;
-      } else if (puestoActual === 3) {
-        bronce = rango;
-        puestoActual += rango.competidores.length;
-      } else {
-        break;
+      if (lugaresOcupados >= 3) break;
+      if (rango.competidores.length > 1) gruposEmpatados.push(rango);
+      lugaresOcupados += rango.competidores.length;
+    }
+
+    const idsEmpatados = new Set(
+      gruposEmpatados.flatMap((rango) => rango.competidores.map((competidor) => competidor.id)),
+    );
+
+    for (let id = 1; id <= contadorCompetidores; id++) {
+      const boton = document.getElementById(`btn_desempate_${id}`);
+      const fila = document.getElementById(`fila_3_${id}`);
+      const nombre = document.getElementById(`celda_nombre_${id}`);
+      const total = document.getElementById(`total_${id}`);
+      const activo = fila?.dataset.activo === "true";
+      const debeMostrar = activo || idsEmpatados.has(id);
+
+      if (boton) {
+        boton.style.display = debeMostrar ? "block" : "none";
+        boton.innerHTML = debeMostrar
+          ? '<i class="fas fa-times-circle"></i> Quitar Desempate'
+          : '<i class="fas fa-scale-balanced"></i> Desempate';
+      }
+      if (fila) {
+        fila.style.display = debeMostrar ? "table-row" : "none";
+        if (nombre) nombre.rowSpan = debeMostrar ? 3 : 2;
+        if (total) total.rowSpan = debeMostrar ? 3 : 2;
       }
     }
 
-    const htmlOro = oro
-      ? armarEscalon(
-          oro,
-          "oro",
-          "1°",
-          "1° puesto",
-          oro.competidores.length > 1
-            ? "Desempate por 1° puesto"
-            : "Puntaje base",
-        )
-      : "";
-    const htmlPlata = plata
-      ? armarEscalon(
-          plata,
-          "plata",
-          "2°",
-          "2° puesto",
-          plata.competidores.length > 1
-            ? "Desempate por 2° puesto"
-            : "Puntaje base",
-        )
-      : "";
-    const htmlBronce = bronce
-      ? armarEscalon(
-          bronce,
-          "bronce",
-          "3°",
-          "3° puesto",
-          bronce.competidores.length > 1
-            ? "Desempate por 3° puesto"
-            : "Puntaje base",
-        )
-      : "";
+    if (accionesPodio) accionesPodio.style.display = gruposEmpatados.length ? "block" : "none";
 
-    podioDOM.innerHTML = htmlOro + htmlPlata + htmlBronce;
+    function escalon(rango, clase, titulo, puesto) {
+      const nombres = rango.competidores
+        .map((competidor) => escaparHTML(competidor.nombre))
+        .join("<br><small><i>y</i></small><br>");
+      const aviso = rango.competidores.length > 1
+        ? `<div class="alerta-empate">Desempate por ${puesto}</div>`
+        : rango.desempate > 0
+          ? `<div class="alerta-empate">Puntos desempate: ${rango.desempate}</div>`
+          : "";
+      return `<div class="puesto ${clase}">${titulo}<br><span class="nombres-podio">${nombres}</span><span>${rango.puntaje.toFixed(0)} pts</span>${aviso}</div>`;
+    }
 
-    setTimeout(() => {
-      const elOro = document.querySelector(".oro");
-      const elPlata = document.querySelector(".plata");
-      const elBronce = document.querySelector(".bronce");
-
-      const altoBronce = elBronce ? elBronce.scrollHeight : 0;
-      const altoPlata = elPlata ? elPlata.scrollHeight : 0;
-      const altoOro = elOro ? elOro.scrollHeight : 0;
-
-      const finalBronce = Math.max(95, altoBronce);
-      const finalPlata = Math.max(130, altoPlata, finalBronce + 35);
-      const finalOro = Math.max(170, altoOro, finalPlata + 40);
-
-      if (elBronce) elBronce.style.minHeight = `${finalBronce}px`;
-      if (elPlata) elPlata.style.minHeight = `${finalPlata}px`;
-      if (elOro) elOro.style.minHeight = `${finalOro}px`;
-    }, 10);
+    let puesto = 1;
+    let html = "";
+    for (const rango of rangos) {
+      if (puesto === 1) html += escalon(rango, "oro", "1°", "1° puesto");
+      else if (puesto === 2) html += escalon(rango, "plata", "2°", "2° puesto");
+      else if (puesto === 3) html += escalon(rango, "bronce", "3°", "3° puesto");
+      else break;
+      puesto += rango.competidores.length;
+    }
+    podioDOM.innerHTML = html;
   }
 
   window.TorneoPodio = { calcularPodio };

@@ -4,11 +4,12 @@
 
   if (!idMesa) {
     idMesa = Date.now().toString(36);
-    const nuevaUrl = window.location.pathname + "?mesa=" + idMesa;
-    window.location.replace(nuevaUrl);
+    const nuevaUrl = `${window.location.pathname}?mesa=${idMesa}${window.location.hash}`;
+    window.history.replaceState(null, "", nuevaUrl);
   }
 
   const STORAGE_KEY = `torneoTaekwondoCaché_${idMesa}`;
+  const STORAGE_VERSION = 1;
 
   function serializarEstado({
     categoria,
@@ -17,6 +18,7 @@
     contadorCompetidores,
   }) {
     const estado = {
+      version: STORAGE_VERSION,
       categoria: categoria || "",
       categoriaCustom: categoriaCustom || "",
       edad: edad || "",
@@ -58,10 +60,7 @@
             ? document.getElementById(`j${j}_${id}_3`).value
             : "",
         ),
-        desempateActivo: filaDesempate
-          ? filaDesempate.style.display !== "none"
-          : false,
-        desempateExcluido: filaDesempate?.dataset.excluido === "true",
+        desempateActivo: filaDesempate?.dataset.activo === "true",
       });
     }
 
@@ -90,11 +89,19 @@
   }
 
   function cargarCache() {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-
     try {
-      return JSON.parse(raw);
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const estado = JSON.parse(raw);
+      if (
+        !estado ||
+        typeof estado !== "object" ||
+        !Array.isArray(estado.competidores) ||
+        (estado.version !== undefined && estado.version !== STORAGE_VERSION)
+      ) {
+        throw new Error("Formato de caché inválido o incompatible");
+      }
+      return estado;
     } catch (error) {
       console.warn("No se pudo cargar el caché del torneo:", error);
       return null;
@@ -102,7 +109,11 @@
   }
 
   function limpiarCache() {
-    localStorage.removeItem(STORAGE_KEY);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (error) {
+      console.warn("No se pudo limpiar el caché del torneo:", error);
+    }
   }
 
   window.TorneoStorage = {

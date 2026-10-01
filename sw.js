@@ -1,16 +1,10 @@
-const CACHE_NAME = "torneo-tkd-v8";
+const CACHE_NAME = "torneo-tkd-v11";
 
 const urlsToCache = [
   "./",
   "./index.html",
   "./pages/manual.html",
-  "./styles/base.css",
-  "./styles/layout.css",
-  "./styles/components.css",
-  "./styles/podio.css",
-  "./styles/print.css",
-  "./styles/manual.css",
-  "./styles/marcador.css",
+  "./styles/styles.css",
   "./scripts/tules.js",
   "./scripts/mesa.js",
   "./scripts/storage.js",
@@ -20,10 +14,7 @@ const urlsToCache = [
   "./pages/marcador.html",
   "./scripts/cronometro.js",
   "./scripts/marcador.js",
-  "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
-  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
-  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2",
-  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-regular-400.woff2",
+  "./scripts/inicializacion.js",
 ];
 
 self.addEventListener("install", (event) => {
@@ -40,7 +31,7 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
   event.respondWith(
-    caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+    caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
         return cachedResponse;
       }
@@ -61,12 +52,12 @@ self.addEventListener("fetch", (event) => {
         .catch(() => {
           if (event.request.mode === "navigate") {
             return (
-              caches.match("./index.html", { ignoreSearch: true }) ||
-              caches.match("./pages/manual.html", { ignoreSearch: true }) ||
+              caches.match("./index.html") ||
+              caches.match("./pages/manual.html") ||
               Response.error()
             );
           }
-          return caches.match(event.request, { ignoreSearch: true }) || Response.error();
+          return caches.match(event.request) || Response.error();
         });
     }),
   );

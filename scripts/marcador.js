@@ -1,5 +1,7 @@
 (function () {
-  const canalTv = new BroadcastChannel("canal_cronometro_global");
+  const canalTv = typeof BroadcastChannel === "function"
+    ? new BroadcastChannel("canal_cronometro_global")
+    : null;
 
   let enMarcha = false;
   let tiempoInicio = 0;
@@ -45,6 +47,7 @@
   }
 
   function manejarComando(comando) {
+    if (!comando || typeof comando !== "object") return;
     const display = document.getElementById("displayTV");
     const formaDisplay = document.getElementById("nombreFormaTV");
 
@@ -65,6 +68,7 @@
 
       // Al pausar: muestra el tiempo final exacto con milésimas
       if (display) display.innerText = formatearTiempo(tiempoAcumulado, true);
+      if (formaDisplay) formaDisplay.innerText = comando.nombreForma || "-";
     } else if (comando.accion === "REINICIAR") {
       enMarcha = false;
 
@@ -82,7 +86,6 @@
     }
   }
 
-  canalTv.onmessage = function (event) {
-    manejarComando(event.data);
-  };
+  canalTv?.addEventListener("message", (event) => manejarComando(event.data));
+  canalTv?.postMessage({ accion: "SOLICITAR_ESTADO" });
 })();

@@ -2,15 +2,10 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="./images/icon.png" />
     <title>Torneo Taekwondo - Formas</title>
-    <link rel="stylesheet" href="./styles/base.css" />
-    <link rel="stylesheet" href="./styles/layout.css" />
-    <link rel="stylesheet" href="./styles/components.css" />
-    <link rel="stylesheet" href="./styles/podio.css" />
-    <link rel="stylesheet" href="./styles/print.css" />
-    <link rel="stylesheet" href="./styles/manual.css" />
+    <link rel="stylesheet" href="./styles/styles.css" />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -43,16 +38,16 @@
             </div>
             <div class="cronometro-widget" aria-label="Controles del cronómetro">
               <span id="displayCronometroPC" class="display-cronometro">00:00:000</span>
-              <button id="btnCronoPlay" class="btn-cronometro btn-cronometro-play" title="Iniciar">
+              <button id="btnCronoPlay" class="btn-cronometro btn-cronometro-play" title="Iniciar" aria-label="Iniciar cronómetro">
                 <i class="fas fa-play"></i>
               </button>
-              <button id="btnCronoPausa" class="btn-cronometro btn-cronometro-pausa" title="Pausar">
+              <button id="btnCronoPausa" class="btn-cronometro btn-cronometro-pausa" title="Pausar" aria-label="Pausar cronómetro">
                 <i class="fas fa-pause"></i>
               </button>
-              <button id="btnCronoReset" class="btn-cronometro btn-cronometro-reset" title="Reiniciar">
+              <button id="btnCronoReset" class="btn-cronometro btn-cronometro-reset" title="Reiniciar" aria-label="Reiniciar cronómetro">
                 <i class="fas fa-stop"></i>
               </button>
-              <button id="btnAbrirTV" class="btn-cronometro btn-cronometro-tv" title="Abrir Monitor">
+              <button id="btnAbrirTV" class="btn-cronometro btn-cronometro-tv" title="Abrir Monitor" aria-label="Abrir monitor de TV">
                 <i class="fas fa-tv"></i>
               </button>
             </div>
@@ -100,8 +95,13 @@
                 </select>
               </div>
 
+              <div class="campo" id="campoCategoriaPersonalizada" style="display: none">
+                <label for="inputCategoriaPersonalizada">Categoría personalizada:</label>
+                <input id="inputCategoriaPersonalizada" type="text" maxlength="80" autocomplete="off" />
+              </div>
+
               <div class="campo ocultar-en-pdf" id="contenedor_sorteo" style="justify-content: flex-end; display: none">
-                <button id="btnSortearFormas" class="btn-agregar" style="background-color: #17a2b8">
+                <button id="btnSortearFormas" class="btn-agregar" style="background-color: #17a2b8; width: 100%;">
                   <i class="fas fa-dice"></i> Sortear Formas
                 </button>
               </div>
@@ -120,7 +120,7 @@
                     <th>Juez 4</th>
                     <th>Juez 5</th>
                     <th>SubTotal</th>
-                    <th>Total</th>
+                    <th>Total base</th>
                   </tr>
                 </thead>
                 <tbody id="listaPuntajes"></tbody>
@@ -145,7 +145,7 @@
         </nav>
         <p>
           Desarrollado por
-          <a href="https://github.com/Francisco-Gismondi" target="_blank">
+          <a href="https://github.com/Francisco-Gismondi" target="_blank" rel="noopener noreferrer">
             <strong>Fran_Gis</strong>
           </a>
         </p>

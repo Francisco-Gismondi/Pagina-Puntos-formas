@@ -4,8 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manual de Usuario - Planilla ITF</title>
-    <link rel="stylesheet" href="../styles/base.css" />
-    <link rel="stylesheet" href="../styles/manual.css" />
+    <link rel="stylesheet" href="../styles/styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   </head>
   <body>
@@ -42,8 +41,8 @@
             </li>
             <li>
               <strong>Manejo de Pestañas (Multicategoría):</strong> El sistema permite gestionar diferentes categorías
-              al mismo tiempo. Puede abrir la aplicación en varias pestañas del navegador; la información de una pestaña
-              no interferirá con la otra.
+              al mismo tiempo, siempre que cada una use un identificador distinto en <code>?mesa=</code>. No abras la
+              misma mesa en dos pestañas: ambas escribirían sobre el mismo estado guardado.
             </li>
           </ul>
 
@@ -158,9 +157,9 @@
 
           <div class="caso-estudio">
             <strong>Caso E: Recargué la página por accidente (F5) o cerré el navegador</strong><br />
-            Solución: Sus datos están protegidos. El sistema guarda una copia de seguridad en cada pulsación de tecla.
-            Al recargar la página, verá a todos sus competidores y notas exactamente donde los dejó. (Nota: La memoria
-            se borra únicamente si se cierra la pestaña por completo).
+            Solución: Sus datos se guardan en el navegador en cada cambio. Al recargar la página, verá a sus
+            competidores y notas donde los dejó. El almacenamiento puede persistir después de cerrar la pestaña; no use
+            la misma mesa en dos pestañas al mismo tiempo.
           </div>
         </section>
       </main>
@@ -172,7 +171,7 @@
         </nav>
         <p>
           Desarrollado por
-          <a href="https://github.com/Francisco-Gismondi" target="_blank">
+          <a href="https://github.com/Francisco-Gismondi" target="_blank" rel="noopener noreferrer">
             <strong>Fran_Gis</strong>
           </a>
         </p>

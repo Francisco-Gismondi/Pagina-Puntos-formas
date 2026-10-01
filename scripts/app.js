@@ -6,11 +6,21 @@
 
   const appTorneo = (function () {
     let contadorCompetidores = 0;
+    let restaurando = false;
+
+    function guardarCacheSeguro() {
+      if (!restaurando) guardarCache(contadorCompetidores);
+    }
 
     function getCategoriaActual() {
       const select = document.getElementById("inputCategoria");
       if (!select) return "";
       return select.value.trim();
+    }
+
+    function getCategoriaParaCompetidor(id) {
+      if (getCategoriaActual() !== "Personalizada") return getCategoriaActual();
+      return document.getElementById(`cinturon_${id}`)?.value.trim() || "";
     }
 
     function actualizarEstadoCategoriaPersonalizada() {
@@ -31,14 +41,6 @@
       botones.forEach((btn) => (btn.style.display = mostrar));
     }
 
-    function actualizarTiempo(selectElem, idCompetidor, ronda) {
-      const forma = selectElem.value;
-      const tiempo = TULES[forma] ? TULES[forma] : "-";
-      const celdaTiempo = document.getElementById(`tiempo_${idCompetidor}_${ronda}`);
-      if (celdaTiempo) celdaTiempo.innerText = tiempo;
-      guardarCache(contadorCompetidores);
-    }
-
     function procesarNotas(id, ronda) {
       const notasObj = [];
 
@@ -49,7 +51,17 @@
         input.classList.remove("juez-descartado");
 
         if (input.value.trim() !== "") {
-          let valor = parseInt(input.value, 10);
+          if (!/^-?\d+$/.test(input.value.trim())) {
+            input.value = "";
+            continue;
+          }
+
+          let valor = Number(input.value);
+
+          if (!Number.isInteger(valor)) {
+            input.value = "";
+            continue;
+          }
 
           if (valor > 100) {
             valor = 100;
@@ -59,7 +71,7 @@
             input.value = 0;
           }
 
-          if (Number.isNaN(valor)) valor = 0;
+          if (!Number.isFinite(valor)) continue;
 
           notasObj.push({ elemento: input, valor });
         }
@@ -106,14 +118,13 @@
     }
 
     function actualizarTotal(id) {
-      const sub1 = parseInt(document.getElementById(`subtotal_${id}_1`)?.innerText, 10) || 0;
-      const sub2 = parseInt(document.getElementById(`subtotal_${id}_2`)?.innerText, 10) || 0;
-      const sub3 = parseInt(document.getElementById(`subtotal_${id}_3`)?.innerText, 10) || 0;
+      const sub1 = parseFloat(document.getElementById(`subtotal_${id}_1`)?.innerText) || 0;
+      const sub2 = parseFloat(document.getElementById(`subtotal_${id}_2`)?.innerText) || 0;
 
       const total = document.getElementById(`total_${id}`);
-      if (total) total.innerText = (sub1 + sub2 + sub3).toFixed(0);
+      if (total) total.innerText = (sub1 + sub2).toFixed(0);
 
-      guardarCache(contadorCompetidores);
+      guardarCacheSeguro();
     }
 
     function agregarCompetidor(datos = null) {
@@ -127,7 +138,7 @@
         <tr id="fila_1_${id}">
           <td id="celda_nombre_${id}" rowspan="2" style="vertical-align: middle;">
           <p class="numero-competidor ocultar-en-pdf">${id}</p>
-            <input type="text" id="nombre_${id}" placeholder="Numero/Nombre competidor...">
+            <input type="text" id="nombre_${id}" aria-label="Nombre o número del competidor ${id}" placeholder="Número/Nombre competidor...">
 
             <select id="cinturon_${id}" class="select-cinturon-individual" style="display: none; margin-top: 5px; width: 100%;">
               <option value="">Cinturón individual...</option>
@@ -147,36 +158,36 @@
             </button>
           </td>
           <td>1ra Forma</td>
-          <td><select id="forma_${id}_1" data-id="${id}" data-ronda="1">${generarOpcionesTules()}</select></td>
+          <td><select id="forma_${id}_1" aria-label="Forma de la primera ronda del competidor ${id}" data-id="${id}" data-ronda="1">${generarOpcionesTules()}</select></td>
           <td id="tiempo_${id}_1">-</td>
-          <td><input type="number" min="0" max="100" step="1" id="j1_${id}_1"></td>
-          <td><input type="number" min="0" max="100" step="1" id="j2_${id}_1"></td>
-          <td><input type="number" min="0" max="100" step="1" id="j3_${id}_1"></td>
-          <td><input type="number" min="0" max="100" step="1" id="j4_${id}_1"></td>
-          <td><input type="number" min="0" max="100" step="1" id="j5_${id}_1"></td>
+          <td><input type="number" min="0" max="100" step="1" aria-label="Juez 1, primera forma, competidor ${id}" id="j1_${id}_1"></td>
+          <td><input type="number" min="0" max="100" step="1" aria-label="Juez 2, primera forma, competidor ${id}" id="j2_${id}_1"></td>
+          <td><input type="number" min="0" max="100" step="1" aria-label="Juez 3, primera forma, competidor ${id}" id="j3_${id}_1"></td>
+          <td><input type="number" min="0" max="100" step="1" aria-label="Juez 4, primera forma, competidor ${id}" id="j4_${id}_1"></td>
+          <td><input type="number" min="0" max="100" step="1" aria-label="Juez 5, primera forma, competidor ${id}" id="j5_${id}_1"></td>
           <td id="subtotal_${id}_1" style="font-weight: bold;">0</td>
-          <td rowspan="2" id="total_${id}" style="vertical-align: middle; font-size: 1.5em; font-weight: bold; background: #e9ecef;">0</td>
+          <td rowspan="2" id="total_${id}" style="vertical-align: middle; font-size: 1.5em; font-weight: bold;">0</td>
         </tr>
         <tr class="fila-oscura" id="fila_2_${id}">
           <td>2da Forma</td>
-          <td><select id="forma_${id}_2" data-id="${id}" data-ronda="2">${generarOpcionesTules()}</select></td>
+          <td><select id="forma_${id}_2" aria-label="Forma de la segunda ronda del competidor ${id}" data-id="${id}" data-ronda="2">${generarOpcionesTules()}</select></td>
           <td id="tiempo_${id}_2">-</td>
-          <td><input type="number" min="0" max="100" step="1" id="j1_${id}_2"></td>
-          <td><input type="number" min="0" max="100" step="1" id="j2_${id}_2"></td>
-          <td><input type="number" min="0" max="100" step="1" id="j3_${id}_2"></td>
-          <td><input type="number" min="0" max="100" step="1" id="j4_${id}_2"></td>
-          <td><input type="number" min="0" max="100" step="1" id="j5_${id}_2"></td>
+          <td><input type="number" min="0" max="100" step="1" aria-label="Juez 1, segunda forma, competidor ${id}" id="j1_${id}_2"></td>
+          <td><input type="number" min="0" max="100" step="1" aria-label="Juez 2, segunda forma, competidor ${id}" id="j2_${id}_2"></td>
+          <td><input type="number" min="0" max="100" step="1" aria-label="Juez 3, segunda forma, competidor ${id}" id="j3_${id}_2"></td>
+          <td><input type="number" min="0" max="100" step="1" aria-label="Juez 4, segunda forma, competidor ${id}" id="j4_${id}_2"></td>
+          <td><input type="number" min="0" max="100" step="1" aria-label="Juez 5, segunda forma, competidor ${id}" id="j5_${id}_2"></td>
           <td id="subtotal_${id}_2" style="font-weight: bold;">0</td>
         </tr>
         <tr class="fila-desempate" id="fila_3_${id}" style="display: none;">
           <td>Desempate</td>
-          <td><select id="forma_${id}_3" data-id="${id}" data-ronda="3">${generarOpcionesTules()}</select></td>
+          <td><select id="forma_${id}_3" aria-label="Forma de desempate del competidor ${id}" data-id="${id}" data-ronda="3">${generarOpcionesTules()}</select></td>
           <td id="tiempo_${id}_3">-</td>
-          <td><input type="number" min="0" max="100" step="1" id="j1_${id}_3"></td>
-          <td><input type="number" min="0" max="100" step="1" id="j2_${id}_3"></td>
-          <td><input type="number" min="0" max="100" step="1" id="j3_${id}_3"></td>
-          <td><input type="number" min="0" max="100" step="1" id="j4_${id}_3"></td>
-          <td><input type="number" min="0" max="100" step="1" id="j5_${id}_3"></td>
+          <td><input type="number" min="0" max="100" step="1" aria-label="Juez 1, desempate, competidor ${id}" id="j1_${id}_3"></td>
+          <td><input type="number" min="0" max="100" step="1" aria-label="Juez 2, desempate, competidor ${id}" id="j2_${id}_3"></td>
+          <td><input type="number" min="0" max="100" step="1" aria-label="Juez 3, desempate, competidor ${id}" id="j3_${id}_3"></td>
+          <td><input type="number" min="0" max="100" step="1" aria-label="Juez 4, desempate, competidor ${id}" id="j4_${id}_3"></td>
+          <td><input type="number" min="0" max="100" step="1" aria-label="Juez 5, desempate, competidor ${id}" id="j5_${id}_3"></td>
           <td id="subtotal_${id}_3" style="font-weight: bold;">0</td>
         </tr>
       `;
@@ -196,7 +207,7 @@
       }
 
       if (nombreInput) {
-        nombreInput.addEventListener("input", () => guardarCache(contadorCompetidores));
+        nombreInput.addEventListener("input", guardarCacheSeguro);
       }
 
       for (let ronda = 1; ronda <= 3; ronda++) {
@@ -232,6 +243,7 @@
             input.addEventListener("input", () => {
               procesarNotas(id, ronda);
             });
+            input.addEventListener("wheel", (event) => event.preventDefault(), { passive: false });
           }
         }
       }
@@ -262,8 +274,8 @@
         }
 
         const filaDesempate = document.getElementById(`fila_3_${id}`);
-        if (filaDesempate && datos.desempateExcluido) {
-          filaDesempate.dataset.excluido = "true";
+        if (filaDesempate) {
+          filaDesempate.dataset.activo = datos.desempateActivo ? "true" : "false";
         }
         if (datos.desempateActivo) toggleDesempate(id, true);
       }
@@ -278,7 +290,7 @@
       const btnDesempate = document.getElementById(`btn_desempate_${id}`);
 
       if (fila3.style.display === "none" || forceShow) {
-        fila3.dataset.excluido = "false";
+        fila3.dataset.activo = "true";
         fila3.style.display = "table-row";
         tdNombre.rowSpan = 3;
         tdTotal.rowSpan = 3;
@@ -286,7 +298,7 @@
           btnDesempate.innerHTML = '<i class="fas fa-times-circle"></i> Quitar Desempate';
         }
       } else {
-        fila3.dataset.excluido = "true";
+        fila3.dataset.activo = "false";
         fila3.style.display = "none";
         tdNombre.rowSpan = 2;
         tdTotal.rowSpan = 2;
@@ -296,7 +308,10 @@
 
         for (let j = 1; j <= 5; j++) {
           const input = document.getElementById(`j${j}_${id}_3`);
-          if (input) input.value = "";
+          if (input) {
+            input.value = "";
+            input.classList.remove("juez-descartado");
+          }
         }
 
         const select = document.getElementById(`forma_${id}_3`);
@@ -311,7 +326,7 @@
         actualizarTotal(id);
       }
 
-      guardarCache(contadorCompetidores);
+      guardarCacheSeguro();
     }
 
     function eliminarCompetidor(id) {
@@ -325,7 +340,7 @@
         if (f3) f3.remove();
 
         actualizarBotonesEliminar();
-        guardarCache(contadorCompetidores);
+        guardarCacheSeguro();
       }
     }
 
@@ -349,7 +364,7 @@
           }
         }
       }
-      guardarCache(contadorCompetidores);
+      guardarCacheSeguro();
     }
 
     function sortearYAsignar() {
@@ -381,13 +396,17 @@
         const selectF2 = document.getElementById(`forma_${i}_2`);
 
         if (selectF1 && selectF2) {
-          let catCompetidor = categoriaSeleccionada;
+          const catCompetidor = esPersonalizada
+            ? getCategoriaParaCompetidor(i)
+            : categoriaSeleccionada;
+          if (!catCompetidor) continue;
 
-          if (esPersonalizada) {
-            const cinturonInd = document.getElementById(`cinturon_${i}`);
-            if (!cinturonInd || !cinturonInd.value) continue;
-            catCompetidor = cinturonInd.value;
-          }
+          const tieneNotas = [1, 2].some((ronda) =>
+            [1, 2, 3, 4, 5].some((juez) =>
+              document.getElementById(`j${juez}_${i}_${ronda}`)?.value.trim() !== "",
+            ),
+          );
+          if (tieneNotas && !confirm(`El competidor ${i} ya tiene notas. ¿Reemplazar sus formas?`)) continue;
 
           const formasSorteadas = sortearFormas(catCompetidor);
 
@@ -402,7 +421,7 @@
         }
       }
 
-      guardarCache(contadorCompetidores);
+      guardarCacheSeguro();
     }
 
     function sortearFormaEmpate() {
@@ -417,9 +436,13 @@
         const sub2 = parseFloat(document.getElementById(`subtotal_${i}_2`)?.innerText) || 0;
         const desempate = parseFloat(document.getElementById(`subtotal_${i}_3`)?.innerText) || 0;
         const base = sub1 + sub2;
-        const filaDesempate = document.getElementById(`fila_3_${i}`);
+        const notasBaseCompletas = [1, 2].every((ronda) =>
+          [1, 2, 3, 4, 5].every((juez) =>
+            document.getElementById(`j${juez}_${i}_${ronda}`)?.value.trim() !== "",
+          ),
+        );
 
-        if ((base > 0 || desempate > 0) && filaDesempate?.dataset.excluido !== "true") {
+        if (notasBaseCompletas) {
           competidoresActivos.push({ id: i, base, desempate });
         }
       }
@@ -486,7 +509,8 @@
           .map((ronda) => document.getElementById(`forma_${comp.id}_${ronda}`)?.value)
           .filter(Boolean);
 
-        const { rango2 } = window.TorneoTules.obtenerRangoFormas(categoriaActual || "default");
+        const categoriaCompetidor = getCategoriaParaCompetidor(comp.id) || categoriaActual;
+        const { rango2 } = window.TorneoTules.obtenerRangoFormas(categoriaCompetidor || "default");
 
         const formasDisponibles = rango2.filter((forma) => !formasUsadas.includes(forma));
 
@@ -496,6 +520,14 @@
           formaElegida = formasDisponibles[indiceAleatorio];
         }
 
+        for (let juez = 1; juez <= 5; juez++) {
+          const input = document.getElementById(`j${juez}_${comp.id}_3`);
+          if (input) {
+            input.value = "";
+            input.classList.remove("juez-descartado");
+          }
+        }
+        document.getElementById(`subtotal_${comp.id}_3`).innerText = "0";
         select.value = formaElegida;
         actualizarTiempo(select, comp.id, 3);
       });
@@ -519,11 +551,11 @@
 
       if (celdaTiempo) celdaTiempo.innerText = tiempo;
 
-      if (window.TorneoCronometro) {
+      if (!restaurando && window.TorneoCronometro) {
         window.TorneoCronometro.reiniciar(forma);
       }
 
-      guardarCache(contadorCompetidores);
+      guardarCacheSeguro();
     }
 
     function exportarPDF() {
@@ -538,12 +570,37 @@
       const nombreArchivo = `Planilla_Formas_${cat}_${edad}`;
 
       const tituloOriginal = document.title;
+      const selectoresForma = document.querySelectorAll("#tablaCompetidores td select");
+      const valoresFormaPDF = [];
+
+      selectoresForma.forEach((select) => {
+        const valor = document.createElement("span");
+        valor.className = "valor-forma-pdf";
+        valor.textContent = select.options[select.selectedIndex]?.textContent.trim() || "-";
+        select.classList.add("ocultar-en-pdf");
+        select.after(valor);
+        valoresFormaPDF.push({ select, valor });
+      });
+
+      const restaurarControles = () => {
+        valoresFormaPDF.forEach(({ select, valor }) => {
+          select.classList.remove("ocultar-en-pdf");
+          valor.remove();
+        });
+        document.title = tituloOriginal;
+      };
+
       document.title = nombreArchivo;
+      window.addEventListener("afterprint", restaurarControles, { once: true });
       window.print();
-      document.title = tituloOriginal;
     }
 
     function exportarExcel() {
+      if (typeof XLSX === "undefined") {
+        alert("No se pudo cargar el exportador de Excel. Verificá la conexión o usá Exportar PDF.");
+        return;
+      }
+
       if (confirm("¿Deseas descargar los datos actuales en formato Excel?")) {
         const datosExcel = [];
 
@@ -566,7 +623,7 @@
           "Juez 4",
           "Juez 5",
           "SubTotal",
-          "Total",
+          "Total base",
         ]);
 
         for (let i = 1; i <= contadorCompetidores; i++) {
@@ -623,35 +680,39 @@
     function cargarEstadoGuardado() {
       const estado = cargarCache();
 
-      if (estado) {
-        let catSelect = document.getElementById("inputCategoria");
-        let inputCustom = document.getElementById("inputCategoriaPersonalizada");
+      restaurando = true;
+      try {
+        if (estado) {
+          const catSelect = document.getElementById("inputCategoria");
+          const inputCustom = document.getElementById("inputCategoriaPersonalizada");
+          if (catSelect) catSelect.value = estado.categoria || "";
+          if (inputCustom) inputCustom.value = estado.categoriaCustom || "";
+          document.getElementById("inputEdad").value = estado.edad || "";
 
-        if (catSelect && estado.categoria) {
-          catSelect.value = estado.categoria;
-        }
-
-        if (inputCustom && estado.categoriaCustom) {
-          inputCustom.value = estado.categoriaCustom;
-        }
-
-        document.getElementById("inputEdad").value = estado.edad || "";
-
-        if (estado.competidores.length > 0) {
-          estado.competidores.forEach((comp) => agregarCompetidor(comp));
+          if (estado.competidores.length > 0) {
+            estado.competidores.forEach((comp) => agregarCompetidor(comp));
+          } else {
+            agregarCompetidor();
+          }
         } else {
           agregarCompetidor();
         }
-      } else {
+      } catch (error) {
+        console.error("No se pudo restaurar la planilla:", error);
+        document.getElementById("listaPuntajes")?.replaceChildren();
+        contadorCompetidores = 0;
         agregarCompetidor();
+      } finally {
+        restaurando = false;
       }
 
       actualizarBotonesEliminar();
       verificarBotonSorteo();
+      guardarCache(contadorCompetidores);
     }
 
     function inicializarControles() {
-      document.getElementById("btnAgregarCompetidor")?.addEventListener("click", agregarCompetidor);
+      document.getElementById("btnAgregarCompetidor")?.addEventListener("click", () => agregarCompetidor());
       document.getElementById("btnCalcularPodio")?.addEventListener("click", () => calcularPodio(contadorCompetidores));
       document.getElementById("btnNuevaLlave")?.addEventListener("click", abrirNuevaLlave);
       document.getElementById("btnExportarExcel")?.addEventListener("click", exportarExcel);
@@ -662,15 +723,6 @@
       document.getElementById("inputCategoria")?.addEventListener("change", verificarBotonSorteo);
       document.getElementById("inputCategoriaPersonalizada")?.addEventListener("input", verificarBotonSorteo);
       document.getElementById("inputEdad")?.addEventListener("change", verificarBotonSorteo);
-      document.addEventListener(
-        "wheel",
-        function (event) {
-          if (document.activeElement.type === "number") {
-            event.preventDefault();
-          }
-        },
-        { passive: false },
-      );
       document.addEventListener("keydown", (event) => {
         const elementoActivo = document.activeElement;
         const esCampoEditable = elementoActivo?.matches('input, textarea, select, button, [contenteditable="true"]');
