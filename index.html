@@ -14,13 +14,7 @@
     <div class="page-shell">
       <header class="encabezado-principal">
         <div class="title-wrapper">
-          <a
-            class="titulo-link"
-            href="./index.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Abrir la página en una nueva pestaña"
-          >
+          <a class="titulo-link" href="./index.html" target="_blank" rel="noopener noreferrer" aria-label="Abrir la página en una nueva pestaña">
             <img class="titulo-icono" src="./images/icon.png" alt="Logo de Taekwondo" />
             <h1 class="titulo-pagina">Planilla de Puntuación - Formas</h1>
           </a>
@@ -31,12 +25,11 @@
         <section class="contenedor" aria-label="Planilla de torneo">
           <div class="controles-superiores ocultar-en-pdf">
             <div class="grupo-botones grupo-botones-principales">
-              <button id="btnAgregarCompetidor" class="btn-agregar">
-                <i class="fas fa-user-plus"></i> Agregar Competidor
-              </button>
+              <button id="btnAgregarCompetidor" class="btn-agregar"><i class="fas fa-user-plus"></i> Agregar Competidor</button>
               <button id="btnCalcularPodio" class="btn-podio"><i class="fas fa-trophy"></i> Calcular Podio</button>
             </div>
             <div class="cronometro-widget" aria-label="Controles del cronómetro">
+              <span id="formaCronometro" class="forma-cronometro" aria-live="polite">Sin forma</span>
               <span id="displayCronometroPC" class="display-cronometro">00:00:000</span>
               <button id="btnCronoPlay" class="btn-cronometro btn-cronometro-play" title="Iniciar" aria-label="Iniciar cronómetro">
                 <i class="fas fa-play"></i>
@@ -52,16 +45,10 @@
               </button>
             </div>
             <div class="grupo-botones-cuadrado">
-              <button id="btnNuevaLlave" class="btn-nueva-llave">
-                <i class="fas fa-external-link-alt"></i> Abrir Nueva Llave
-              </button>
-              <button id="btnExportarExcel" class="btn-excel">
-                <i class="fas fa-file-excel"></i> Exportar a Excel
-              </button>
+              <button id="btnNuevaLlave" class="btn-nueva-llave"><i class="fas fa-external-link-alt"></i> Abrir Nueva Llave</button>
+              <button id="btnExportarExcel" class="btn-excel"><i class="fas fa-file-excel"></i> Exportar a Excel</button>
               <button id="btnExportarPDF" class="btn-pdf"><i class="fas fa-file-pdf"></i> Exportar a PDF</button>
-              <button id="btnReiniciarPlanilla" class="btn-reiniciar">
-                <i class="fas fa-sync-alt"></i> Reiniciar Plantilla
-              </button>
+              <button id="btnReiniciarPlanilla" class="btn-reiniciar"><i class="fas fa-sync-alt"></i> Reiniciar Plantilla</button>
             </div>
           </div>
 
@@ -101,7 +88,7 @@
               </div>
 
               <div class="campo ocultar-en-pdf" id="contenedor_sorteo" style="justify-content: flex-end; display: none">
-                <button id="btnSortearFormas" class="btn-agregar" style="background-color: #17a2b8; width: 100%;">
+                <button id="btnSortearFormas" class="btn-agregar" style="background-color: #17a2b8; width: 100%">
                   <i class="fas fa-dice"></i> Sortear Formas
                 </button>
               </div>

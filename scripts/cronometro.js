@@ -1,7 +1,5 @@
 (function () {
-  const canalTv = typeof BroadcastChannel === "function"
-    ? new BroadcastChannel("canal_cronometro_global")
-    : null;
+  const canalTv = typeof BroadcastChannel === "function" ? new BroadcastChannel("canal_cronometro_global") : null;
 
   let tiempoInicio = 0;
   let tiempoAcumulado = 0;
@@ -14,6 +12,24 @@
     const tiempoTexto = window.TorneoTules?.TULES[nombreForma];
     if (!tiempoTexto) return 0;
     return parseInt(tiempoTexto, 10) * 1000;
+  }
+
+  // Si incluirMs es true, muestra mm:ss:ms; si es false, solo mm:ss
+  function formatearTiempo(milisegundosTotales, incluirMs = false) {
+    const min = Math.floor(milisegundosTotales / 60000)
+      .toString()
+      .padStart(2, "0");
+    const seg = Math.floor((milisegundosTotales % 60000) / 1000)
+      .toString()
+      .padStart(2, "0");
+
+    if (!incluirMs) {
+      const decima = Math.floor((milisegundosTotales % 1000) / 100);
+      return `${min}:${seg}.${decima}`;
+    }
+
+    const ms = (milisegundosTotales % 1000).toString().padStart(3, "0");
+    return `${min}:${seg}:${ms}`;
   }
 
   function formatearTiempo(milisegundosTotales, incluirMs = false) {
@@ -41,6 +57,7 @@
 
     if (!display) return;
 
+    // En ejecución: mm:ss.d
     display.innerText = formatearTiempo(transcurrido, false);
 
     if (limiteMs > 0 && transcurrido >= limiteMs) {
@@ -60,7 +77,7 @@
       tiempoAcumulado: tiempoAcumulado,
       timestamp: Date.now(),
     };
-    canalTv?.postMessage(comando);
+    canalTv.postMessage(comando);
   }
 
   function buclePC() {
@@ -108,6 +125,13 @@
     }
   }
 
+  function mostrarFormaEnWidget() {
+    const el = document.getElementById("formaCronometro");
+    if (!el) return;
+    el.textContent = formaActual !== "-" ? formaActual : "Sin forma";
+    el.title = el.textContent;
+  }
+
   function reiniciar(nombreForma = null) {
     pausar();
     tiempoInicio = 0;
@@ -127,7 +151,7 @@
       displayPC.innerText = "00:00:000";
       displayPC.style.color = "white";
     }
-
+    mostrarFormaEnWidget();
     emitirATV("REINICIAR");
   }
 
@@ -136,11 +160,6 @@
     const idMesa = urlParams.get("mesa");
     window.open(`./pages/marcador.html?mesa=${idMesa}`, "MarcadorTV", "width=800,height=600");
   }
-
-  canalTv?.addEventListener("message", (event) => {
-    if (event.data?.accion !== "SOLICITAR_ESTADO") return;
-    emitirATV(enMarcha ? "INICIAR" : "PAUSAR");
-  });
 
   window.TorneoCronometro = { iniciar, pausar, alternar, reiniciar, abrirTV };
 })();
