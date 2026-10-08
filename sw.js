@@ -1,7 +1,7 @@
 const VERSION = "v12";
 const CACHE_NAME = `torneo-tkd-${VERSION}`;
 
-const TIMEOUT_RED_MS = 3000;
+const TIMEOUT_RED_MS = 5000;
 
 const urlsToCache = [
   "./",

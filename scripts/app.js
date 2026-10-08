@@ -1,5 +1,5 @@
 (function () {
-  const { TULES, generarOpcionesTules, sortearFormas, obtenerRangoFormas } = window.TorneoTules;
+  const { TULES, generarOpcionesTules, sortearFormas} = window.TorneoTules;
   const { guardarCache, cargarCache, limpiarCache } = window.TorneoStorage;
   const { calcularPodio } = window.TorneoPodio;
   const { abrirNuevaLlave } = window.TorneoMesa;
@@ -195,8 +195,14 @@
       tbody.insertAdjacentHTML("beforeend", html);
 
       const nombreInput = document.getElementById(`nombre_${id}`);
+      const cinturonInput = document.getElementById(`cinturon_${id}`);
       const btnDesempate = document.getElementById(`btn_desempate_${id}`);
       const eliminarBtn = document.querySelector(`.btn-eliminar[data-id="${id}"]`);
+
+      if (cinturonInput) {
+        cinturonInput.style.display = getCategoriaActual() === "Personalizada" ? "block" : "none";
+        cinturonInput.addEventListener("change", guardarCacheSeguro);
+      }
 
       if (btnDesempate) {
         btnDesempate.addEventListener("click", () => toggleDesempate(id));
@@ -224,7 +230,7 @@
           celdaTiempo.style.color = "#0056b3";
           celdaTiempo.style.fontWeight = "bold";
           celdaTiempo.style.textDecoration = "underline";
-          celdaTiempo.title = "Tocar para enviar forma y tiempo a la TV";
+          celdaTiempo.title = "Tocar para enviar forma y tiempo al cronómetro y a la TV";
 
           celdaTiempo.addEventListener("click", () => {
             const formaSeleccionada = select.value;
@@ -385,11 +391,13 @@
 
       if (
         !confirm(
-          `Se sortearán formas de manera aleatoria e individual para cada competidor en la categoría: ${categoriaSeleccionada}.\n\n¿Deseas continuar?`,
+          "Se sorteará un mismo par de formas para todos los competidores de una misma categoría. En categorías personalizadas, se agruparán según el cinturón individual seleccionado.\n\n¿Deseas continuar?",
         )
       ) {
         return;
       }
+
+      const formasPorCategoria = new Map();
 
       for (let i = 1; i <= contadorCompetidores; i++) {
         const selectF1 = document.getElementById(`forma_${i}_1`);
@@ -408,8 +416,10 @@
           );
           if (tieneNotas && !confirm(`El competidor ${i} ya tiene notas. ¿Reemplazar sus formas?`)) continue;
 
-          const formasSorteadas = sortearFormas(catCompetidor);
-
+          if (!formasPorCategoria.has(catCompetidor)) {
+            formasPorCategoria.set(catCompetidor, sortearFormas(catCompetidor));
+          }
+          const formasSorteadas = formasPorCategoria.get(catCompetidor);
           selectF1.value = formasSorteadas.forma1;
           selectF2.value = formasSorteadas.forma2;
 
@@ -550,10 +560,6 @@
       const celdaTiempo = document.getElementById(`tiempo_${idCompetidor}_${ronda}`);
 
       if (celdaTiempo) celdaTiempo.innerText = tiempo;
-
-      if (!restaurando && window.TorneoCronometro) {
-        window.TorneoCronometro.reiniciar(forma);
-      }
 
       guardarCacheSeguro();
     }
