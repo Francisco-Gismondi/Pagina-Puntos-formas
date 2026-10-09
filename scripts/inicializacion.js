@@ -74,7 +74,6 @@
           window.addEventListener("focus", buscarActualizacion);
           window.addEventListener("online", buscarActualizacion);
 
-          // Por si la página queda abierta mucho tiempo
           setInterval(buscarActualizacion, 5 * 60 * 1000);
         })
         .catch((error) =>

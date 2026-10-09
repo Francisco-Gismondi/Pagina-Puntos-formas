@@ -1,5 +1,9 @@
 (function () {
-  const canalTv = typeof BroadcastChannel === "function" ? new BroadcastChannel("canal_cronometro_global") : null;
+  const parametros = new URLSearchParams(window.location.search);
+  const idMesa = parametros.get("mesa") || "default";
+  const canalTv = typeof BroadcastChannel === "function"
+    ? new BroadcastChannel(`canal_cronometro_${idMesa}`)
+    : null;
 
   let tiempoInicio = 0;
   let tiempoAcumulado = 0;
@@ -40,7 +44,18 @@
       tiempoAcumulado: tiempoAcumulado,
       timestamp: Date.now(),
     };
-       canalTv?.postMessage(comando);
+    canalTv?.postMessage(comando);
+  }
+
+  function emitirEstadoATV() {
+    canalTv?.postMessage({
+      accion: "ESTADO",
+      nombreForma: formaActual,
+      limite: limiteActualMs,
+      tiempoAcumulado,
+      timestamp: tiempoInicio,
+      enMarcha,
+    });
   }
 
   function buclePC() {
@@ -127,6 +142,10 @@
   function estaEnUso() {
     return enMarcha || tiempoAcumulado > 0;
   }
+
+  canalTv?.addEventListener("message", (event) => {
+    if (event.data?.accion === "SOLICITAR_ESTADO") emitirEstadoATV();
+  });
 
   window.TorneoCronometro = { iniciar, pausar, alternar, reiniciar, abrirTV, estaEnUso };
 })();

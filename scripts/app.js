@@ -1,5 +1,5 @@
 (function () {
-  const { TULES, generarOpcionesTules, sortearFormas} = window.TorneoTules;
+  const { TULES, generarOpcionesTules, sortearFormas } = window.TorneoTules;
   const { guardarCache, cargarCache, limpiarCache } = window.TorneoStorage;
   const { calcularPodio } = window.TorneoPodio;
   const { abrirNuevaLlave } = window.TorneoMesa;
@@ -227,7 +227,7 @@
         const celdaTiempo = document.getElementById(`tiempo_${id}_${ronda}`);
         if (celdaTiempo) {
           celdaTiempo.style.cursor = "pointer";
-          celdaTiempo.style.color = "#0056b3";
+          celdaTiempo.style.color = "var(--color-enlace-tiempo)";
           celdaTiempo.style.fontWeight = "bold";
           celdaTiempo.style.textDecoration = "underline";
           celdaTiempo.title = "Tocar para enviar forma y tiempo al cronómetro y a la TV";
@@ -373,6 +373,87 @@
       guardarCacheSeguro();
     }
 
+    function elegirFormaMenosUsada(formas, usos, excluir) {
+      const candidatas = formas.filter((forma) => forma !== excluir);
+      if (candidatas.length === 0) return "";
+
+      const menorUso = Math.min(...candidatas.map((forma) => usos.get(forma) || 0));
+      const menosUsadas = candidatas.filter((forma) => (usos.get(forma) || 0) === menorUso);
+      return menosUsadas[Math.floor(Math.random() * menosUsadas.length)];
+    }
+
+    function sortearFormasDistintas(esPersonalizada, categoriaSeleccionada) {
+      const usosPorCategoria = new Map();
+      const formasCompartidasPorCategoria = new Map();
+      const categoriasAvisadas = new Set();
+
+      function obtenerUsos(categoria, numeroRango, formas) {
+        if (!usosPorCategoria.has(categoria)) {
+          usosPorCategoria.set(categoria, [new Map(), new Map()]);
+        }
+        const usos = usosPorCategoria.get(categoria)[numeroRango - 1];
+        formas.forEach((forma) => {
+          if (!usos.has(forma)) usos.set(forma, 0);
+        });
+        return usos;
+      }
+
+      function registrarForma(usos, forma) {
+        if (usos.has(forma)) usos.set(forma, usos.get(forma) + 1);
+      }
+
+      for (let i = 1; i <= contadorCompetidores; i++) {
+        const selectF1 = document.getElementById(`forma_${i}_1`);
+        const selectF2 = document.getElementById(`forma_${i}_2`);
+        if (!selectF1 || !selectF2) continue;
+
+        const categoria = esPersonalizada ? getCategoriaParaCompetidor(i) : categoriaSeleccionada;
+        if (!categoria) continue;
+
+        const { rango1, rango2 } = window.TorneoTules.obtenerRangoFormas(categoria);
+        const usosRango1 = obtenerUsos(categoria, 1, rango1);
+        const usosRango2 = obtenerUsos(categoria, 2, rango2);
+        const tieneNotas = [1, 2].some((ronda) =>
+          [1, 2, 3, 4, 5].some((juez) => document.getElementById(`j${juez}_${i}_${ronda}`)?.value.trim() !== ""),
+        );
+        if (tieneNotas && !confirm(`El competidor ${i} ya tiene notas. ¿Reemplazar sus formas?`)) {
+          registrarForma(usosRango1, selectF1.value);
+          registrarForma(usosRango2, selectF2.value);
+          continue;
+        }
+
+        const formasValidas = [...new Set([...rango1, ...rango2])];
+
+        if (!rango1.length || !rango2.length || formasValidas.length < 2) {
+          if (!categoriasAvisadas.has(categoria)) {
+            alert(`La categoría "${categoria}" tiene menos de dos formas disponibles. Se usará el sorteo habitual.`);
+            categoriasAvisadas.add(categoria);
+          }
+
+          if (!formasCompartidasPorCategoria.has(categoria)) {
+            formasCompartidasPorCategoria.set(categoria, sortearFormas(categoria));
+          }
+          const formasSorteadas = formasCompartidasPorCategoria.get(categoria);
+          selectF1.value = formasSorteadas.forma1;
+          selectF2.value = formasSorteadas.forma2;
+        } else {
+          const forma1 = elegirFormaMenosUsada(rango1, usosRango1, "");
+          registrarForma(usosRango1, forma1);
+          const forma2 = elegirFormaMenosUsada(rango2, usosRango2, forma1);
+          registrarForma(usosRango2, forma2);
+          selectF1.value = forma1;
+          selectF2.value = forma2;
+        }
+
+        const celdaTiempo1 = document.getElementById(`tiempo_${i}_1`);
+        const celdaTiempo2 = document.getElementById(`tiempo_${i}_2`);
+        if (celdaTiempo1) celdaTiempo1.innerText = TULES[selectF1.value] || "-";
+        if (celdaTiempo2) celdaTiempo2.innerText = TULES[selectF2.value] || "-";
+      }
+
+      guardarCacheSeguro();
+    }
+
     function sortearYAsignar() {
       const categoriaElement = document.getElementById("inputCategoria");
 
@@ -389,11 +470,17 @@
         return;
       }
 
-      if (
-        !confirm(
-          "Se sorteará un mismo par de formas para todos los competidores de una misma categoría. En categorías personalizadas, se agruparán según el cinturón individual seleccionado.\n\n¿Deseas continuar?",
-        )
-      ) {
+      const usarFormasDistintas = document.getElementById("switchDistintasFormas")?.checked === true;
+      const mensajeConfirmacion = usarFormasDistintas
+        ? "Se sortearán formas distintas para cada competidor, intentando evitar repeticiones dentro de cada categoría. En categorías personalizadas, se agruparán según el cinturón individual seleccionado.\n\n¿Deseas continuar?"
+        : "Se sorteará un mismo par de formas para todos los competidores de una misma categoría. En categorías personalizadas, se agruparán según el cinturón individual seleccionado.\n\n¿Deseas continuar?";
+
+      if (!confirm(mensajeConfirmacion)) {
+        return;
+      }
+
+      if (usarFormasDistintas) {
+        sortearFormasDistintas(esPersonalizada, categoriaSeleccionada);
         return;
       }
 
@@ -404,15 +491,11 @@
         const selectF2 = document.getElementById(`forma_${i}_2`);
 
         if (selectF1 && selectF2) {
-          const catCompetidor = esPersonalizada
-            ? getCategoriaParaCompetidor(i)
-            : categoriaSeleccionada;
+          const catCompetidor = esPersonalizada ? getCategoriaParaCompetidor(i) : categoriaSeleccionada;
           if (!catCompetidor) continue;
 
           const tieneNotas = [1, 2].some((ronda) =>
-            [1, 2, 3, 4, 5].some((juez) =>
-              document.getElementById(`j${juez}_${i}_${ronda}`)?.value.trim() !== "",
-            ),
+            [1, 2, 3, 4, 5].some((juez) => document.getElementById(`j${juez}_${i}_${ronda}`)?.value.trim() !== ""),
           );
           if (tieneNotas && !confirm(`El competidor ${i} ya tiene notas. ¿Reemplazar sus formas?`)) continue;
 
@@ -447,9 +530,7 @@
         const desempate = parseFloat(document.getElementById(`subtotal_${i}_3`)?.innerText) || 0;
         const base = sub1 + sub2;
         const notasBaseCompletas = [1, 2].every((ronda) =>
-          [1, 2, 3, 4, 5].every((juez) =>
-            document.getElementById(`j${juez}_${i}_${ronda}`)?.value.trim() !== "",
-          ),
+          [1, 2, 3, 4, 5].every((juez) => document.getElementById(`j${juez}_${i}_${ronda}`)?.value.trim() !== ""),
         );
 
         if (notasBaseCompletas) {
@@ -508,27 +589,48 @@
       }
 
       const empatadosParaSortear = empatesEnPodio[empatesEnPodio.length - 1];
+      const ordenCinturones = ["1 Gup", "1er Dan", "2do Dan", "3er Dan", "4to Dan", "5to Dan"];
+      const categoriasEmpatados = empatadosParaSortear.map((comp) => {
+        if (categoriaActual !== "Personalizada") return categoriaActual;
+        return getCategoriaParaCompetidor(comp.id);
+      });
+
+      if (categoriasEmpatados.some((categoria) => !categoria)) {
+        alert("Selecciona el cinturón individual de todos los competidores empatados antes de sortear el desempate.");
+        return;
+      }
+
+      const categoriaSorteo = categoriasEmpatados.reduce((menor, categoria) =>
+        ordenCinturones.indexOf(categoria) < ordenCinturones.indexOf(menor) ? categoria : menor,
+      );
+      const rangoSorteo = window.TorneoTules.obtenerRangoFormas(categoriaSorteo || "default").rango2;
+      const formasUsadas = new Set(
+        empatadosParaSortear.flatMap((comp) =>
+          [1, 2]
+            .map((ronda) => document.getElementById(`forma_${comp.id}_${ronda}`)?.value)
+            .filter(Boolean),
+        ),
+      );
+      const rangosValidos = categoriasEmpatados.map((categoria) =>
+        new Set(window.TorneoTules.obtenerRangoFormas(categoria).rango2),
+      );
+      const formasDisponibles = rangoSorteo.filter((forma) =>
+        !formasUsadas.has(forma) && rangosValidos.every((rango) => rango.has(forma)),
+      );
+
+      if (formasDisponibles.length === 0) {
+        alert("No hay una forma de desempate común disponible para todos sin repetir las formas ya realizadas.");
+        return;
+      }
+
+      const indiceAleatorio = Math.floor(Math.random() * formasDisponibles.length);
+      const formaElegida = formasDisponibles[indiceAleatorio];
 
       empatadosParaSortear.forEach((comp) => {
         toggleDesempate(comp.id, true);
 
         const select = document.getElementById(`forma_${comp.id}_3`);
         if (!select) return;
-
-        const formasUsadas = [1, 2]
-          .map((ronda) => document.getElementById(`forma_${comp.id}_${ronda}`)?.value)
-          .filter(Boolean);
-
-        const categoriaCompetidor = getCategoriaParaCompetidor(comp.id) || categoriaActual;
-        const { rango2 } = window.TorneoTules.obtenerRangoFormas(categoriaCompetidor || "default");
-
-        const formasDisponibles = rango2.filter((forma) => !formasUsadas.includes(forma));
-
-        let formaElegida = "-";
-        if (formasDisponibles.length > 0) {
-          const indiceAleatorio = Math.floor(Math.random() * formasDisponibles.length);
-          formaElegida = formasDisponibles[indiceAleatorio];
-        }
 
         for (let juez = 1; juez <= 5; juez++) {
           const input = document.getElementById(`j${juez}_${comp.id}_3`);
@@ -608,63 +710,124 @@
       }
 
       if (confirm("¿Deseas descargar los datos actuales en formato Excel?")) {
-        const datosExcel = [];
-
         const cat = getCategoriaActual() || "";
+        const categoriaPersonalizada = cat === "Personalizada"
+          ? document.getElementById("inputCategoriaPersonalizada").value.trim()
+          : "";
         const edad = document.getElementById("inputEdad").value || "";
-        const catNombre = cat.trim().replace(/[\\/\\:*?"<>|]/g, "_") || "SinCategoria";
+        const catNombre = (categoriaPersonalizada || cat).trim().replace(/[\\/\\:*?"<>|]/g, "_") || "SinCategoria";
         const edadNombre = edad.trim().replace(/[\\/\\:*?"<>|]/g, "_") || "SinEdad";
         const nombreArchivo = `Planilla_Formas_${catNombre}_${edadNombre}.xlsx`;
-
-        datosExcel.push(["Categoría / Cinturón:", cat, "", "Edades:", edad]);
-        datosExcel.push([]);
-        datosExcel.push([
-          "Competidor",
-          "Ronda",
-          "Forma",
-          "Tiempo",
-          "Juez 1",
-          "Juez 2",
-          "Juez 3",
-          "Juez 4",
-          "Juez 5",
-          "SubTotal",
-          "Total base",
-        ]);
+        const puntuaciones = [];
+        const clasificacion = [];
 
         for (let i = 1; i <= contadorCompetidores; i++) {
           const inputNombre = document.getElementById(`nombre_${i}`);
           if (!inputNombre) continue;
 
           const nombre = inputNombre.value;
-          const total = document.getElementById(`total_${i}`).innerText;
+          const cinturon = document.getElementById(`cinturon_${i}`)?.value || "";
+          const base = [1, 2].reduce((suma, ronda) =>
+            suma + (Number(document.getElementById(`subtotal_${i}_${ronda}`)?.innerText) || 0), 0);
+          const desempateActivo = document.getElementById(`fila_3_${i}`)?.dataset.activo === "true";
+          const puntajeDesempate = desempateActivo
+            ? Number(document.getElementById(`subtotal_${i}_3`)?.innerText) || 0
+            : 0;
+          const rondasBaseCompletas = [1, 2].every((ronda) =>
+            [1, 2, 3, 4, 5].every((juez) => {
+              const valor = document.getElementById(`j${juez}_${i}_${ronda}`)?.value.trim() || "";
+              return valor !== "" && Number.isFinite(Number(valor));
+            }),
+          );
+          const rondaDesempateCompleta = !desempateActivo || [1, 2, 3, 4, 5].every((juez) => {
+            const valor = document.getElementById(`j${juez}_${i}_3`)?.value.trim() || "";
+            return valor !== "" && Number.isFinite(Number(valor));
+          });
+          const completo = rondasBaseCompletas && rondaDesempateCompleta;
 
-          const forma1 = document.getElementById(`forma_${i}_1`).value || "-";
-          const tiempo1 = document.getElementById(`tiempo_${i}_1`).innerText;
-          const sub1 = document.getElementById(`subtotal_${i}_1`).innerText;
-          const j1 = [1, 2, 3, 4, 5].map((j) => document.getElementById(`j${j}_${i}_1`).value || 0);
+          clasificacion.push({
+            id: i,
+            nombre,
+            categoria: categoriaPersonalizada || cat,
+            cinturon,
+            base,
+            puntajeDesempate,
+            completo,
+            puesto: "",
+          });
 
-          datosExcel.push([nombre, "1ra Forma", forma1, tiempo1, ...j1, sub1, total]);
+          for (let ronda = 1; ronda <= (desempateActivo ? 3 : 2); ronda++) {
+            const forma = document.getElementById(`forma_${i}_${ronda}`).value || "-";
+            const tiempo = document.getElementById(`tiempo_${i}_${ronda}`).innerText;
+            const subtotal = Number(document.getElementById(`subtotal_${i}_${ronda}`).innerText) || 0;
+            const notas = [1, 2, 3, 4, 5].map((juez) => {
+              const valor = document.getElementById(`j${juez}_${i}_${ronda}`).value.trim();
+              return valor === "" ? "" : Number(valor);
+            });
 
-          const forma2 = document.getElementById(`forma_${i}_2`).value || "-";
-          const tiempo2 = document.getElementById(`tiempo_${i}_2`).innerText;
-          const sub2 = document.getElementById(`subtotal_${i}_2`).innerText;
-          const j2 = [1, 2, 3, 4, 5].map((j) => document.getElementById(`j${j}_${i}_2`).value || 0);
-
-          datosExcel.push(["", "2da Forma", forma2, tiempo2, ...j2, sub2, ""]);
-
-          if (document.getElementById(`fila_3_${i}`).style.display !== "none") {
-            const forma3 = document.getElementById(`forma_${i}_3`).value || "-";
-            const tiempo3 = document.getElementById(`tiempo_${i}_3`).innerText;
-            const sub3 = document.getElementById(`subtotal_${i}_3`).innerText;
-            const j3 = [1, 2, 3, 4, 5].map((j) => document.getElementById(`j${j}_${i}_3`).value || 0);
-            datosExcel.push(["", "Desempate", forma3, tiempo3, ...j3, sub3, ""]);
+            puntuaciones.push([
+              i,
+              nombre,
+              categoriaPersonalizada,
+              cinturon,
+              ronda === 3 ? "Desempate" : ronda === 1 ? "1ra Forma" : "2da Forma",
+              forma,
+              tiempo,
+              ...notas,
+              subtotal,
+              base,
+              desempateActivo ? puntajeDesempate : "",
+            ]);
           }
         }
 
-        const hoja = XLSX.utils.aoa_to_sheet(datosExcel);
-        hoja["!cols"] = [
+        const elegibles = clasificacion
+          .filter((competidor) => competidor.completo)
+          .sort((a, b) => b.base - a.base || b.puntajeDesempate - a.puntajeDesempate || a.id - b.id);
+        let puestoActual = 0;
+        let anterior = null;
+        elegibles.forEach((competidor, indice) => {
+          if (!anterior || competidor.base !== anterior.base ||
+              competidor.puntajeDesempate !== anterior.puntajeDesempate) {
+            puestoActual = indice + 1;
+          }
+          competidor.puesto = puestoActual;
+          anterior = competidor;
+        });
+
+        clasificacion.sort((a, b) => {
+          if (a.completo !== b.completo) return a.completo ? -1 : 1;
+          if (a.completo) return b.base - a.base || b.puntajeDesempate - a.puntajeDesempate || a.id - b.id;
+          return a.id - b.id;
+        });
+
+        const hojaPuntuaciones = XLSX.utils.aoa_to_sheet([
+          ["Categoría / Cinturón:", cat, "Categoría personalizada:", categoriaPersonalizada, "Edades:", edad],
+          [],
+          [
+            "N.º",
+            "Competidor",
+            "Categoría personalizada",
+            "Cinturón individual",
+            "Ronda",
+            "Forma",
+            "Tiempo",
+            "Juez 1",
+            "Juez 2",
+            "Juez 3",
+            "Juez 4",
+            "Juez 5",
+            "Subtotal ronda",
+            "Total base",
+            "Puntaje desempate",
+          ],
+          ...puntuaciones,
+        ]);
+        hojaPuntuaciones["!cols"] = [
+          { wch: 7 },
           { wch: 25 },
+          { wch: 25 },
+          { wch: 18 },
           { wch: 12 },
           { wch: 15 },
           { wch: 10 },
@@ -673,12 +836,38 @@
           { wch: 8 },
           { wch: 8 },
           { wch: 8 },
-          { wch: 10 },
-          { wch: 10 },
+          { wch: 14 },
+          { wch: 12 },
+          { wch: 18 },
+        ];
+
+        const hojaClasificacion = XLSX.utils.aoa_to_sheet([
+          ["Puesto", "N.º", "Competidor", "Categoría", "Cinturón individual", "Total base", "Puntaje desempate", "Estado"],
+          ...clasificacion.map((competidor) => [
+            competidor.puesto,
+            competidor.id,
+            competidor.nombre,
+            competidor.categoria,
+            competidor.cinturon,
+            competidor.base,
+            competidor.puntajeDesempate,
+            competidor.completo ? "Completo" : "Incompleto",
+          ]),
+        ]);
+        hojaClasificacion["!cols"] = [
+          { wch: 9 },
+          { wch: 7 },
+          { wch: 30 },
+          { wch: 25 },
+          { wch: 18 },
+          { wch: 14 },
+          { wch: 18 },
+          { wch: 16 },
         ];
 
         const libro = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(libro, hoja, "Puntuaciones");
+        XLSX.utils.book_append_sheet(libro, hojaPuntuaciones, "Puntuaciones");
+        XLSX.utils.book_append_sheet(libro, hojaClasificacion, "Clasificación");
         XLSX.writeFile(libro, nombreArchivo);
       }
     }

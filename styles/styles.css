@@ -1,16 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
-
-/* ==========================================================================
-   ORDEN DE CAPAS
-   Las capas deciden quién gana, no la especificidad. Una regla de una capa
-   posterior siempre pisa a una anterior, aunque tenga un selector más simple.
-   Por eso ya no hacen falta ids repetidos ni !important para ganar.
-   ========================================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap");
 @layer base, componentes, paginas, responsive, impresion;
 
-/* ==========================================================================
-   TOKENS
-   ========================================================================== */
 :root {
   --color-fondo: #f8f9fa;
   --color-superficie: #ffffff;
@@ -24,6 +14,7 @@
   --color-texto: #202124;
   --color-texto-secundario: #5f6368;
   --color-borde: #dadce0;
+  --color-enlace-tiempo: #0056b3;
   --sombra-panel: 0 2px 12px rgba(0, 0, 0, 0.06);
 
   --espaciado-xs: 4px;
@@ -80,7 +71,6 @@
     font-family: var(--fuente-titulo);
   }
 
-  /* Cifras: ancho fijo para que los dígitos no "bailen" */
   input[type="number"],
   .display-cronometro,
   #displayTV {
@@ -167,7 +157,6 @@
    Layout, controles, tabla, cronómetro y podio.
    ========================================================================== */
 @layer componentes {
-
   /* ---------- Layout ---------- */
   .page-shell {
     display: flex;
@@ -287,6 +276,7 @@
   }
 
   .title-wrapper {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -298,10 +288,168 @@
     align-items: center;
     justify-content: center;
     gap: 12px;
-    width: fit-content;
+    max-width: calc(100% - 96px);
     margin: 0 auto;
     color: inherit;
     text-decoration: none;
+  }
+
+  .btn-menu-configuracion {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 48px;
+    min-width: 48px;
+    height: 48px;
+    min-height: 48px;
+    padding: 0;
+    transform: translateY(-50%);
+    background-color: var(--color-superficie);
+    border-color: var(--color-borde);
+    color: var(--color-principal);
+    font-size: 1.2rem;
+  }
+
+  .btn-menu-configuracion i.fas,
+  .btn-cerrar-configuracion i.fas {
+    margin: 0;
+  }
+
+  .menu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: grid;
+    justify-items: end;
+    align-items: start;
+    padding: 16px;
+    box-sizing: border-box;
+    background-color: rgba(20, 30, 45, 0.28);
+  }
+
+  .menu-overlay[hidden] {
+    display: none;
+  }
+
+  .panel-configuracion {
+    width: min(360px, 100%);
+    max-height: min(70vh, 520px);
+    max-height: min(70dvh, 520px);
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 20px;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-panel);
+    background-color: var(--color-superficie);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  }
+
+  .encabezado-configuracion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .encabezado-configuracion h2 {
+    margin: 0;
+    color: var(--color-texto);
+    font-size: 1.6rem;
+    text-align: left;
+  }
+
+  .btn-cerrar-configuracion {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+    background: transparent;
+    color: var(--color-texto-secundario);
+  }
+
+  .mensaje-configuracion {
+    margin: 18px 0 0;
+    color: var(--color-texto-secundario);
+    line-height: 1.5;
+  }
+
+  .switch {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 44px;
+    margin-top: 16px;
+    color: var(--color-texto);
+    line-height: 1.4;
+    cursor: pointer;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: relative;
+    display: block;
+    flex: 0 0 60px;
+    width: 60px;
+    height: 34px;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+  }
+
+  .switch input:checked + .slider {
+    background-color: var(--color-exito);
+  }
+
+  .switch input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+
+  .switch input:focus-visible + .slider {
+    outline: 3px solid #0056b3;
+    outline-offset: 3px;
+  }
+
+  .switch-label {
+    flex: 1;
+  }
+
+  .slider::after {
+    content: "OFF";
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    transition: 0.4s;
+  }
+
+  .switch input:checked + .slider::after {
+    content: "ON";
+    left: 5px;
+    right: auto;
   }
 
   .titulo-icono {
@@ -335,9 +483,7 @@
     margin: 0;
   }
 
-  /* ---------- Tabla de competidores ----------
-     :where() deja el id con especificidad cero: los selectores de clase
-     (.btn-eliminar, .btn-desempate) ganan sin repetir reglas ni usar !important. */
+  /* ---------- Tabla de competidores ----------*/
   .fila-oscura {
     background-color: var(--color-superficie-suave);
   }
@@ -649,7 +795,6 @@
    Manual de uso y pantalla pública (marcador).
    ========================================================================== */
 @layer paginas {
-
   /* ---------- Manual ---------- */
   body.manual-page-body {
     margin: 0;
@@ -866,11 +1011,8 @@
 
 /* ==========================================================================
    CAPA 4 · RESPONSIVE
-   Un solo bloque por punto de corte. Al ir en una capa posterior pisa a los
-   componentes sin necesidad de !important.
    ========================================================================== */
 @layer responsive {
-
   @media (max-width: 1024px) {
     body:not(.marcador-page-body) {
       padding: 10px;
@@ -1052,8 +1194,6 @@
       bottom: 80px;
     }
 
-    /* En el sorteo el botón vuelve a ser un botón normal de ancho completo.
-       El id gana por especificidad dentro de la misma capa. */
     #contenedor_sorteo .btn-agregar {
       position: static;
       width: 100%;
@@ -1122,7 +1262,28 @@
     }
 
     .titulo-pagina {
-      font-size: 1.9rem;
+      font-size: clamp(1.35rem, 5vw, 1.9rem);
+    }
+
+    .titulo-link {
+      gap: 8px;
+    }
+
+    .titulo-icono {
+      width: 48px;
+      height: 48px;
+      flex: 0 0 48px;
+    }
+
+    .menu-overlay {
+      padding: 10px;
+    }
+
+    .panel-configuracion {
+      width: min(360px, 100%);
+      max-height: min(70vh, 520px);
+      max-height: min(70dvh, 520px);
+      padding: 16px;
     }
 
     th,
@@ -1185,7 +1346,7 @@
 }
 
 /* ==========================================================================
-   ACCESIBILIDAD · movimiento reducido
+   ACCESIBILIDAD
    ========================================================================== */
 @layer base {
   @media (prefers-reduced-motion: reduce) {
@@ -1197,11 +1358,10 @@
 
 /* ==========================================================================
    IMPRESIÓN (PDF / papel)
-   @page va fuera de las capas porque no todos los navegadores lo admiten dentro.
    ========================================================================== */
 @media print {
   @page {
-    size: Card landscape;
+    size: A4 landscape;
     margin: 10mm;
   }
 }
@@ -1223,8 +1383,6 @@
       padding: 0;
     }
 
-    /* Único !important que se conserva: oculta aunque algún script haya
-       dejado un display inline en estos elementos. */
     .ocultar-en-pdf,
     .controles-superiores,
     .btn-eliminar,
@@ -1239,10 +1397,23 @@
       white-space: normal;
     }
 
+    .table-container {
+      overflow: visible;
+    }
+
     table {
       table-layout: fixed;
       width: 100%;
+      min-width: 0;
       font-size: 10pt;
+    }
+
+    thead {
+      display: table-header-group;
+    }
+
+    tfoot {
+      display: table-footer-group;
     }
 
     th,
@@ -1269,9 +1440,9 @@
       margin: 0;
     }
 
-    tr,
-    tbody {
+    tr {
       page-break-inside: avoid;
+      break-inside: avoid;
     }
 
     th,
@@ -1310,5 +1481,115 @@
     th:nth-child(11) {
       width: 10%;
     }
+  }
+}
+
+/* ==========================================================================
+   MODO OSCURO
+   ========================================================================== */
+@media screen {
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+
+    --color-fondo: #121417;
+    --color-superficie: #1e2125;
+    --color-superficie-suave: #272b30;
+    --color-principal: #7db3ff;
+    --color-principal-suave: #1c2b45;
+    --color-texto: #e8eaed;
+    --color-texto-secundario: #9aa0a6;
+    --color-borde: #3c4043;
+    --color-enlace-tiempo: #8ab4f8;
+    --sombra-panel: 0 2px 12px rgba(0, 0, 0, 0.5);
+  }
+
+  :root[data-theme="dark"] body {
+    color: var(--color-texto);
+  }
+
+  :root[data-theme="dark"] input[type="number"],
+  :root[data-theme="dark"] input[type="text"],
+  :root[data-theme="dark"] select {
+    border-color: var(--color-borde);
+    color: var(--color-texto);
+  }
+
+  :root[data-theme="dark"] :focus-visible {
+    outline-color: #8ab4f8;
+  }
+
+  :root[data-theme="dark"] th {
+    background-color: #1a4f9c;
+    color: #fff;
+  }
+
+  :root[data-theme="dark"] .contenedor,
+  :root[data-theme="dark"] .controles-superiores {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  :root[data-theme="dark"] .encabezado-torneo label {
+    color: var(--color-texto-secundario);
+  }
+
+  :root[data-theme="dark"] .seccion-podio {
+    border-top-color: var(--color-borde);
+  }
+
+  :root[data-theme="dark"] .fila-desempate {
+    background-color: rgba(251, 188, 5, 0.18);
+  }
+
+  :root[data-theme="dark"] .juez-descartado {
+    color: #f28b82;
+    background-color: rgba(217, 48, 37, 0.25);
+  }
+
+  :root[data-theme="dark"] .alerta-empate {
+    background: var(--color-superficie);
+    color: #f28b82;
+    border-color: #f28b82;
+  }
+
+  :root[data-theme="dark"] .btn-eliminar {
+    color: #f28b82;
+    border-color: #f28b82;
+  }
+
+  :root[data-theme="dark"] .btn-eliminar:hover,
+  :root[data-theme="dark"] .btn-eliminar:focus {
+    background-color: var(--color-peligro);
+    border-color: var(--color-peligro);
+    color: #fff;
+  }
+
+  :root[data-theme="dark"] .slider {
+    background-color: #5f6368;
+  }
+
+  :root[data-theme="dark"] .menu-overlay {
+    background-color: rgba(0, 0, 0, 0.55);
+  }
+
+  :root[data-theme="dark"] .titulo-icono {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+  }
+
+  :root[data-theme="dark"] .firma-creador {
+    color: var(--color-texto-secundario);
+  }
+
+  :root[data-theme="dark"] .manual-footer {
+    background: rgba(30, 33, 37, 0.92);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  :root[data-theme="dark"] body.manual-page-body {
+    background: linear-gradient(180deg, #0d0f12 0%, var(--color-fondo) 100%);
+  }
+
+  :root[data-theme="dark"] .manual-page .caso-estudio {
+    background: linear-gradient(135deg, rgba(23, 162, 184, 0.14), rgba(255, 255, 255, 0.02));
+    box-shadow: none;
   }
 }

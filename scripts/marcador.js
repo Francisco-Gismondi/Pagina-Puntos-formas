@@ -1,6 +1,8 @@
 (function () {
+  const parametros = new URLSearchParams(window.location.search);
+  const idMesa = parametros.get("mesa") || "default";
   const canalTv = typeof BroadcastChannel === "function"
-    ? new BroadcastChannel("canal_cronometro_global")
+    ? new BroadcastChannel(`canal_cronometro_${idMesa}`)
     : null;
 
   let enMarcha = false;
@@ -53,13 +55,23 @@
 
     limiteMs = Number(comando.limite) || 0;
 
-    if (comando.accion === "INICIAR") {
+    if (comando.accion === "INICIAR" || comando.accion === "ESTADO") {
       tiempoInicio = Number(comando.timestamp) || Date.now();
       tiempoAcumulado = Number(comando.tiempoAcumulado) || 0;
-      enMarcha = true;
+      enMarcha = comando.accion === "INICIAR" || comando.enMarcha === true;
+      if (formaDisplay) formaDisplay.innerText = comando.nombreForma || "-";
 
       if (animacionTV) cancelAnimationFrame(animacionTV);
-      actualizarReloj();
+      if (enMarcha) {
+        actualizarReloj();
+      } else {
+        if (display) display.innerText = formatearTiempo(tiempoAcumulado, true);
+        if (display && limiteMs > 0 && tiempoAcumulado >= limiteMs) {
+          display.classList.add("tiempo-agotado");
+        } else {
+          display?.classList.remove("tiempo-agotado");
+        }
+      }
     } else if (comando.accion === "PAUSAR") {
       enMarcha = false;
 

@@ -1,11 +1,13 @@
-const VERSION = "v12";
+const VERSION = "v17";
 const CACHE_NAME = `torneo-tkd-${VERSION}`;
+const LIBRARY_CACHE_NAME = "torneo-tkd-libraries-v1";
 
 const TIMEOUT_RED_MS = 5000;
 
 const urlsToCache = [
   "./",
   "./index.html",
+  "./manifest.webmanifest",
   "./pages/manual.html",
   "./pages/marcador.html",
   "./styles/styles.css",
@@ -14,19 +16,36 @@ const urlsToCache = [
   "./scripts/storage.js",
   "./scripts/podio.js",
   "./scripts/app.js",
+  "./scripts/menu-configuracion.js",
   "./scripts/cronometro.js",
   "./scripts/marcador.js",
   "./scripts/inicializacion.js",
   "./images/icon.png",
+  "./images/icon-192.png",
+  "./images/icon-512.png",
 ];
 
 const HOST_LIBRERIAS = "https://cdnjs.cloudflare.com";
+const urlsLibrerias = [
+  "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-solid-900.woff2",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-regular-400.woff2",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/webfonts/fa-brands-400.woff2",
+];
 
 async function precachear() {
   const cache = await caches.open(CACHE_NAME);
-  const resultados = await Promise.allSettled(urlsToCache.map((url) => cache.add(new Request(url, { cache: "reload" }))));
-  resultados.forEach((r, i) => {
-    if (r.status === "rejected") console.warn("No se pudo cachear:", urlsToCache[i]);
+  await cache.addAll(urlsToCache);
+
+  const cacheLibrerias = await caches.open(LIBRARY_CACHE_NAME);
+  const resultados = await Promise.allSettled(
+    urlsLibrerias.map((url) => cacheLibrerias.add(new Request(url, { cache: "reload" }))),
+  );
+  resultados.forEach((resultado, indice) => {
+    if (resultado.status === "rejected") {
+      console.warn("No se pudo cachear la dependencia:", urlsLibrerias[indice]);
+    }
   });
 }
 
@@ -65,27 +84,33 @@ async function redPrimero(request) {
 }
 
 async function cachePrimero(request) {
-  const guardado = await caches.match(request);
+  const cache = await caches.open(LIBRARY_CACHE_NAME);
+  const guardado = await cache.match(request);
   if (guardado) return guardado;
 
   const resp = await fetch(request);
   if (resp && resp.status === 200) {
     const copia = resp.clone();
-    caches.open(CACHE_NAME).then((c) => c.put(request, copia));
+    cache.put(request, copia).catch((error) => {
+      console.warn("No se pudo guardar dependencia en caché:", error);
+    });
   }
   return resp;
 }
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(precachear());
-  self.skipWaiting();
+  event.waitUntil(precachear().then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((nombres) => Promise.all(nombres.filter((n) => n !== CACHE_NAME).map((n) => caches.delete(n))))
+      .then((nombres) => Promise.all(
+        nombres
+          .filter((nombre) => nombre.startsWith("torneo-tkd-") && nombre !== CACHE_NAME && nombre !== LIBRARY_CACHE_NAME)
+          .map((nombre) => caches.delete(nombre)),
+      ))
       .then(() => self.clients.claim()),
   );
 });

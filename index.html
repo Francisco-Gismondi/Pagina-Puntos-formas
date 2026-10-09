@@ -4,12 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="./images/icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <meta name="theme-color" content="#104892" />
     <title>Torneo Taekwondo - Formas</title>
+    <script>
+      // Aplica el tema antes de pintar para evitar el parpadeo blanco.
+      (function () {
+        try {
+          var t = localStorage.getItem("torneo-tema");
+          if (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) t = "dark";
+          if (t === "dark") document.documentElement.setAttribute("data-theme", "dark");
+        } catch (e) {}
+      })();
+    </script>
     <link rel="stylesheet" href="./styles/styles.css" />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
   </head>
   <body>
     <div class="page-shell">
@@ -19,6 +30,16 @@
             <img class="titulo-icono" src="./images/icon.png" alt="Logo de Taekwondo" />
             <h1 class="titulo-pagina">Planilla de Puntuación - Formas</h1>
           </a>
+          <button
+            id="btnMenuConfiguracion"
+            class="btn-menu-configuracion"
+            type="button"
+            aria-label="Abrir menú de configuración"
+            aria-expanded="false"
+            aria-controls="menuConfiguracion"
+          >
+            <i class="fas fa-bars" aria-hidden="true"></i>
+          </button>
         </div>
       </header>
 
@@ -139,6 +160,27 @@
         </p>
       </footer>
     </div>
+    <div id="menuConfiguracion" class="menu-overlay" hidden>
+      <aside class="panel-configuracion" role="dialog" aria-modal="true" aria-labelledby="tituloConfiguracion" tabindex="-1">
+        <div class="encabezado-configuracion">
+          <h2 id="tituloConfiguracion">Configuración</h2>
+          <button id="btnCerrarConfiguracion" class="btn-cerrar-configuracion" type="button" aria-label="Cerrar menú de configuración">
+            <i class="fas fa-times" aria-hidden="true"></i>
+          </button>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="miSwitch" />
+          <span class="slider"></span>
+          <span class="switch-label">Modo oscuro</span>
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="switchDistintasFormas" />
+          <span class="slider"></span>
+          <span class="switch-label">Distintas formas por competidor</span>
+        </label>
+      </aside>
+    </div>
+    <script src="./scripts/menu-configuracion.js"></script>
     <script src="./scripts/tules.js"></script>
     <script src="./scripts/mesa.js"></script>
     <script src="./scripts/storage.js"></script>

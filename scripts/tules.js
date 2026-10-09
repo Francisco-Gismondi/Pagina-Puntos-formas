@@ -92,6 +92,11 @@
     return { rango1, rango2 };
   }
 
+  function obtenerFormasValidas(categoria) {
+    const { rango1, rango2 } = obtenerRangoFormas(categoria);
+    return [...new Set([...rango1, ...rango2])];
+  }
+
   const bolsasRango1 = {};
   const bolsasRango2 = {};
 
@@ -139,6 +144,7 @@
     TULES,
     generarOpcionesTules,
     obtenerRangoFormas,
+    obtenerFormasValidas,
     sortearFormas,
   };
 })();
