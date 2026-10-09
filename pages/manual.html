@@ -51,9 +51,11 @@
           <ul>
             <li>
               <strong>Sorteo de Formas:</strong> Una vez cargados los nombres, presione
-              <span class="btn-badge bg-accent"><i class="fas fa-dice"></i> Sortear Formas</span>. El sistema asignará
-              aleatoriamente dos Tules apropiados para la categoría y completará los tiempos reglamentarios. El
-              Presidente del Jurado y el Asistente de TI deben asegurarse de que el patrón seleccionado para la primera
+              <span class="btn-badge bg-accent"><i class="fas fa-dice"></i> Sortear Formas</span>. Según el modo
+              seleccionado, el sistema asignará el mismo par de Tules a cada categoría o sorteará formas distintas
+              para cada competidor, respetando en ambos casos los rangos correspondientes a su cinturón. Si la
+              categoría es personalizada, los competidores se agruparán según el cinturón individual seleccionado.
+              El Presidente del Jurado y el Asistente de TI deben asegurarse de que la forma de la primera
               interpretación no se repita durante la segunda.
             </li>
             <li>
@@ -85,8 +87,10 @@
               <strong>Sorteo de Desempate Automático:</strong> El reglamento exige realizar una Actuación Extra
               utilizando un (1) Patrón designado seleccionado por sorteo. En el sistema, presione el botón
               <span class="btn-badge bg-accent"><i class="fas fa-dice"></i> Sortear Forma de Empate</span>. El sistema
-              detectará automáticamente quiénes están empatados, priorizando siempre resolver primero los empates de
-              menor jerarquía (ej. desempatar primero el 3° puesto, y luego el 1° puesto).
+              asignará la misma forma a todos los competidores del grupo empatado, priorizando resolver primero los
+              empates de menor jerarquía (ej. desempatar primero el 3° puesto, y luego el 1° puesto). En categorías
+              personalizadas, el sorteo se basa en el cinturón de menor rango del grupo y usa una forma válida para
+              todos, sin repetir las formas de las rondas anteriores.
             </li>
             <li>
               <strong>Fila Adicional:</strong> Al ejecutar el sorteo, se desplegará una tercera fila ("Desempate")
@@ -116,11 +120,22 @@
               categoría y la edad.
             </li>
             <li>
+              <strong>Exportación Excel:</strong> el libro incluye las hojas “Puntuaciones” y “Clasificación”. La
+              clasificación ordena por total base y luego por puntaje de desempate; los competidores con rondas
+              incompletas se listan sin puesto.
+            </li>
+            <li>La impresión está configurada para papel A4 horizontal; revise la vista previa antes de imprimir.</li>
+            <li>
               <strong>Siguiente Llave:</strong> Presione
               <span class="btn-badge bg-danger"><i class="fas fa-sync-alt"></i> Reiniciar Plantilla</span>
               para limpiar el sistema y comenzar con la siguiente categoría.
             </li>
           </ul>
+
+          <p>
+            Para usar la aplicación sin conexión, ábrala al menos una vez con internet y espere a que finalice la
+            instalación de la caché. La primera carga sin conexión no está disponible.
+          </p>
 
           <h2>5. Casos Frecuentes y Resolución de Problemas</h2>
 

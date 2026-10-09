@@ -1,0 +1,26 @@
+{
+  "id": "./",
+  "name": "Planilla de Puntuación - Taekwondo Formas",
+  "short_name": "Puntajes TKD",
+  "description": "Planilla de puntuación para torneos de Taekwondo, formas y tules.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#104892",
+  "icons": [
+    {
+      "src": "./images/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "./images/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    }
+  ]
+}

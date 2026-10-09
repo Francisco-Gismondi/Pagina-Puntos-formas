@@ -1,5 +1,9 @@
 (function () {
-  const canalTv = typeof BroadcastChannel === "function" ? new BroadcastChannel("canal_cronometro_global") : null;
+  const parametros = new URLSearchParams(window.location.search);
+  const idMesa = parametros.get("mesa") || "default";
+  const canalTv = typeof BroadcastChannel === "function"
+    ? new BroadcastChannel(`canal_cronometro_${idMesa}`)
+    : null;
 
   let tiempoInicio = 0;
   let tiempoAcumulado = 0;
@@ -32,43 +36,6 @@
     return `${min}:${seg}:${ms}`;
   }
 
-  function formatearTiempo(milisegundosTotales, incluirMs = false) {
-    const min = Math.floor(milisegundosTotales / 60000)
-      .toString()
-      .padStart(2, "0");
-    const seg = Math.floor((milisegundosTotales % 60000) / 1000)
-      .toString()
-      .padStart(2, "0");
-
-    if (!incluirMs) {
-      const decima = Math.floor((milisegundosTotales % 1000) / 100);
-      return `${min}:${seg}.${decima}`;
-    }
-
-    const ms = (milisegundosTotales % 1000).toString().padStart(3, "0");
-    return `${min}:${seg}:${ms}`;
-  }
-
-  function actualizarReloj() {
-    if (!enMarcha) return;
-
-    const transcurrido = tiempoAcumulado + (Date.now() - tiempoInicio);
-    const display = document.getElementById("displayTV");
-
-    if (!display) return;
-
-    // En ejecución: mm:ss.d
-    display.innerText = formatearTiempo(transcurrido, false);
-
-    if (limiteMs > 0 && transcurrido >= limiteMs) {
-      display.classList.add("tiempo-agotado");
-    } else {
-      display.classList.remove("tiempo-agotado");
-    }
-
-    animacionTV = requestAnimationFrame(actualizarReloj);
-  }
-
   function emitirATV(accion) {
     const comando = {
       accion: accion,
@@ -77,7 +44,18 @@
       tiempoAcumulado: tiempoAcumulado,
       timestamp: Date.now(),
     };
-    canalTv.postMessage(comando);
+    canalTv?.postMessage(comando);
+  }
+
+  function emitirEstadoATV() {
+    canalTv?.postMessage({
+      accion: "ESTADO",
+      nombreForma: formaActual,
+      limite: limiteActualMs,
+      tiempoAcumulado,
+      timestamp: tiempoInicio,
+      enMarcha,
+    });
   }
 
   function buclePC() {
@@ -161,5 +139,13 @@
     window.open(`./pages/marcador.html?mesa=${idMesa}`, "MarcadorTV", "width=800,height=600");
   }
 
-  window.TorneoCronometro = { iniciar, pausar, alternar, reiniciar, abrirTV };
+  function estaEnUso() {
+    return enMarcha || tiempoAcumulado > 0;
+  }
+
+  canalTv?.addEventListener("message", (event) => {
+    if (event.data?.accion === "SOLICITAR_ESTADO") emitirEstadoATV();
+  });
+
+  window.TorneoCronometro = { iniciar, pausar, alternar, reiniciar, abrirTV, estaEnUso };
 })();
